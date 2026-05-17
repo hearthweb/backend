@@ -6,10 +6,13 @@ from .base import Base
 
 
 class UserBase(Base):
-    email: str = Field(
-        sa_type=String(255),
+    username: str = Field(
+        sa_type=String(100),
         unique=True,
         index=True,
+    )
+    email: str = Field(
+        sa_type=String(255),
     )
     first_name: str = Field(
         sa_type=String(100),
