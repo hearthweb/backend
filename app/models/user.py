@@ -1,8 +1,10 @@
 from sqlalchemy import String
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field
+
+from .base import Base
 
 
-class UserBase(SQLModel):
+class UserBase(Base):
     email: str = Field(
         sa_type=String(255),
         unique=True,
