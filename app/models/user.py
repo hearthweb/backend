@@ -1,3 +1,4 @@
+import bcrypt
 from sqlalchemy import String
 from sqlmodel import Field
 
@@ -44,3 +45,21 @@ class User(UserBase, table=True):
     is_admin: bool = Field(
         default=False,
     )
+
+    def set_password(self, password: str) -> None:
+        """
+        Compute and set the hashed password with the supplied password
+        """
+        self.hashed_password = bcrypt.hashpw(
+            password.encode("utf-8"),
+            bcrypt.gensalt(),
+        ).decode("utf-8")
+
+    def verify_password(self, password: str) -> bool:
+        """
+        Verify that the supplied password matches the one stored for the user
+        """
+        return bcrypt.checkpw(
+            password.encode("utf-8"),
+            self.hashed_password,
+        )
