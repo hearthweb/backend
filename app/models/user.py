@@ -14,12 +14,15 @@ class UserBase(Base):
         index=True,
     )
     email: str = Field(
+        default="",
         sa_type=String(255),
     )
     first_name: str = Field(
+        default="",
         sa_type=String(100),
     )
     last_name: str = Field(
+        default="",
         sa_type=String(100),
     )
 
