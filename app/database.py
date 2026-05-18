@@ -32,8 +32,4 @@ def init_db() -> None:
 
 def get_session() -> Generator[Session, None, None]:
     with Session(engine) as session:
-        try:
-            yield session
-        except:
-            session.rollback()
-            raise
+        yield session
