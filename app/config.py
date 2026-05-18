@@ -24,24 +24,21 @@ class Settings(BaseSettings):
     DB_PORT: int = 5432
     DB_NAME: str = "postgres"
 
-    # Key used for creating JWT tokens; cannot be empty in prod
+    # Key used for session management; cannot be empty in prod
     SECRET_KEY: str = ""
-
-    # Time (in minutes) that access tokens should be valid for
-    ACCESS_TOKEN_LIFETIME: int = 30
 
     @property
     def DATABASE_URL(self) -> str:
-        if self.ENVIRONMENT == Environment.DEV:
-            return "sqlite:///{path}".format(
-                path=Path(self.DATA_DIR) / "db.sqlite3",
+        if self.ENVIRONMENT == Environment.PROD:
+            return "postgresql://{user}:{password}@{host}:{port}/{name}".format(
+                user=self.DB_USER,
+                password=self.DB_PASSWORD,
+                host=self.DB_HOST,
+                port=self.DB_PORT,
+                name=self.DB_NAME,
             )
-        return "postgresql://{user}:{password}@{host}:{port}/{name}".format(
-            user=self.DB_USER,
-            password=self.DB_PASSWORD,
-            host=self.DB_HOST,
-            port=self.DB_PORT,
-            name=self.DB_NAME,
+        return "sqlite:///{path}".format(
+            path=Path(self.DATA_DIR) / "db.sqlite3",
         )
 
 
