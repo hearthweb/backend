@@ -2,7 +2,7 @@ from pwdlib import PasswordHash
 from sqlalchemy import String
 from sqlmodel import Field
 
-from .base import Base
+from app.models.base import Base
 
 password_hash = PasswordHash.recommended()
 
@@ -30,6 +30,7 @@ class UserBase(Base):
 class UserRead(UserBase):
     id: int
     is_admin: bool
+    is_active: bool
 
 
 class UserCreateEdit(UserBase):
@@ -39,6 +40,9 @@ class UserCreateEdit(UserBase):
 class UserCreateEditAdmin(UserCreateEdit):
     is_admin: bool = Field(
         default=False,
+    )
+    is_active: bool = Field(
+        default=True,
     )
 
 
@@ -52,6 +56,9 @@ class User(UserBase, table=True):
     )
     is_admin: bool = Field(
         default=False,
+    )
+    is_active: bool = Field(
+        default=True,
     )
 
     def set_password(self, password: str) -> None:
