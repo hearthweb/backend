@@ -72,3 +72,12 @@ class User(UserBase, table=True):
         Verify that the supplied password matches the one stored for the user
         """
         return password_hash.verify(password, self.hashed_password)
+
+    @staticmethod
+    def dummy_verify_password(password: str) -> None:
+        password_hash.verify(
+            password,
+            "$argon2id$v=19$m=65536,t=3,p=4$MJd"
+            + "zkCbYMPYw31MI+n24Zg$4steBPCprRmI"
+            + "jkaUBeC+yPxXRTU5p0GAarRLjQvYvs4",
+        )

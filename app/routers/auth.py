@@ -18,29 +18,35 @@ router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 
-async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
-    session: Annotated[Session, Depends(get_session)],
-):
-    credentials_exception = HTTPException(
+def get_credentials_exception() -> HTTPException:
+    return HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid credentials supplied",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
+
+async def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    session: Annotated[Session, Depends(get_session)],
+) -> User:
     try:
         payload = jwt.decode(
             token,
             settings.SECRET_KEY,
             algorithms=[ALGORITHM],
         )
-        username = payload.get("sub")
-        if username is None:
-            raise credentials_exception
+        try:
+            user_id = int(payload.get("sub"))
+        except TypeError, ValueError:
+            raise get_credentials_exception()
+        user = session.exec(
+            select(User).where(User.id == user_id).where(User.is_active),
+        ).first()
+        if user is None:
+            raise get_credentials_exception()
     except InvalidTokenError:
-        raise credentials_exception
-    user = session.exec(select(User).where(User.username == username)).first()
-    if user is None:
-        raise credentials_exception
+        raise get_credentials_exception()
     return user
 
 
@@ -50,17 +56,17 @@ async def login_for_access_token(
     session: Annotated[Session, Depends(get_session)],
 ):
     user = session.exec(
-        select(User).where(User.username == form_data.username),
+        select(User).where(User.username == form_data.username).where(User.is_active),
     ).first()
-    if user is None or not user.verify_password(form_data.password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect username or password",
-        )
+    if user is None:
+        User.dummy_verify_password(form_data.password)
+        raise get_credentials_exception()
+    if not user.verify_password(form_data.password):
+        raise get_credentials_exception()
     return {
         "access_token": jwt.encode(
             {
-                "sub": user.username,
+                "sub": str(user.id),
                 "exp": datetime.now(timezone.utc)
                 + timedelta(minutes=settings.ACCESS_TOKEN_LIFETIME),
             },
@@ -72,5 +78,7 @@ async def login_for_access_token(
 
 
 @router.get("/me")
-async def read_me(user: Annotated[User, Depends(get_current_user)]) -> UserRead:
-    return UserRead(**user.model_dump())
+async def read_me(
+    user: Annotated[User, Depends(get_current_user)],
+) -> UserRead:
+    return UserRead.model_validate(user)
