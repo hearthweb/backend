@@ -11,6 +11,8 @@ from app.config import settings
 from app.database import get_session
 from app.models.user import User, UserRead
 
+ALGORITHM = "HS256"
+
 router = APIRouter()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
@@ -29,7 +31,7 @@ async def get_current_user(
         payload = jwt.decode(
             token,
             settings.SECRET_KEY,
-            algorithms=[settings.ALGORITHM],
+            algorithms=[ALGORITHM],
         )
         username = payload.get("sub")
         if username is None:
@@ -63,7 +65,7 @@ async def login_for_access_token(
                 + timedelta(minutes=settings.ACCESS_TOKEN_LIFETIME),
             },
             settings.SECRET_KEY,
-            algorithm=settings.ALGORITHM,
+            algorithm=ALGORITHM,
         ),
         "token_type": "bearer",
     }

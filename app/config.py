@@ -24,9 +24,6 @@ class Settings(BaseSettings):
     DB_PORT: int = 5432
     DB_NAME: str = "postgres"
 
-    # Algorithm used for creating JWT tokens
-    ALGORITHM: str = "HS256"
-
     # Key used for creating JWT tokens; cannot be empty in prod
     SECRET_KEY: str = ""
 
