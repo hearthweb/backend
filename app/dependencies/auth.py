@@ -11,6 +11,7 @@ get_current_user_responses = {
 }
 
 get_current_admin_responses = {
+    **get_current_user_responses,
     403: {"description": "Not authorized"},
 }
 
