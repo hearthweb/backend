@@ -1,10 +1,15 @@
 from pwdlib import PasswordHash
 from sqlalchemy import String
-from sqlmodel import Field
+from sqlmodel import Field, SQLModel
 
 from app.models.base import Base
 
 password_hash = PasswordHash.recommended()
+
+
+class UserLogin(SQLModel):
+    email: str
+    password: str
 
 
 class UserBase(Base):
