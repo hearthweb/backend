@@ -1,8 +1,10 @@
-import bcrypt
+from pwdlib import PasswordHash
 from sqlalchemy import String
 from sqlmodel import Field
 
 from .base import Base
+
+password_hash = PasswordHash.recommended()
 
 
 class UserBase(Base):
@@ -53,16 +55,10 @@ class User(UserBase, table=True):
         """
         Compute and set the hashed password with the supplied password
         """
-        self.hashed_password = bcrypt.hashpw(
-            password.encode("utf-8"),
-            bcrypt.gensalt(),
-        ).decode("utf-8")
+        self.hashed_password = password_hash.hash(password)
 
     def verify_password(self, password: str) -> bool:
         """
         Verify that the supplied password matches the one stored for the user
         """
-        return bcrypt.checkpw(
-            password.encode("utf-8"),
-            self.hashed_password,
-        )
+        return password_hash.verify(password, self.hashed_password)
