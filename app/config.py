@@ -24,8 +24,14 @@ class Settings(BaseSettings):
     DB_PORT: int = 5432
     DB_NAME: str = "postgres"
 
-    # Used for signing OAuth2 tokens; cannot be empty in prod
+    # Algorithm used for creating JWT tokens
+    ALGORITHM: str = "HS256"
+
+    # Key used for creating JWT tokens; cannot be empty in prod
     SECRET_KEY: str = ""
+
+    # Time (in minutes) that access tokens should be valid for
+    ACCESS_TOKEN_LIFETIME: int = 30
 
     @property
     def DATABASE_URL(self) -> str:
