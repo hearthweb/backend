@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     DB_PORT: int = 5432
     DB_NAME: str = "postgres"
 
+    # Used for signing OAuth2 tokens; cannot be empty in prod
+    SECRET_KEY: str = ""
+
     @property
     def DATABASE_URL(self) -> str:
         if self.ENVIRONMENT == Environment.DEV:
