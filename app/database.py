@@ -22,8 +22,7 @@ def init_db() -> None:
     with Session(engine) as session:
         if session.exec(select(User)).first() is None:
             user = User(
-                username="admin",
-                email="",
+                email="admin@example.com",
                 is_admin=True,
             )
             user.set_password("password")

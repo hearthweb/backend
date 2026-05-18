@@ -8,14 +8,10 @@ password_hash = PasswordHash.recommended()
 
 
 class UserBase(Base):
-    username: str = Field(
-        sa_type=String(100),
+    email: str = Field(
+        sa_type=String(255),
         unique=True,
         index=True,
-    )
-    email: str = Field(
-        default="",
-        sa_type=String(255),
     )
     first_name: str = Field(
         default="",
@@ -30,7 +26,6 @@ class UserBase(Base):
 class UserRead(UserBase):
     id: int
     is_admin: bool
-    is_active: bool
 
 
 class UserCreateEdit(UserBase):
@@ -40,9 +35,6 @@ class UserCreateEdit(UserBase):
 class UserCreateEditAdmin(UserCreateEdit):
     is_admin: bool = Field(
         default=False,
-    )
-    is_active: bool = Field(
-        default=True,
     )
 
 
@@ -56,9 +48,6 @@ class User(UserBase, table=True):
     )
     is_admin: bool = Field(
         default=False,
-    )
-    is_active: bool = Field(
-        default=True,
     )
 
     def set_password(self, password: str) -> None:
@@ -75,6 +64,9 @@ class User(UserBase, table=True):
 
     @staticmethod
     def dummy_verify_password(password: str) -> None:
+        """
+        Perform a "dummy" password verification to prevent timing attacks
+        """
         password_hash.verify(
             password,
             "$argon2id$v=19$m=65536,t=3,p=4$MJd"
