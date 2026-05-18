@@ -12,23 +12,6 @@ router = APIRouter(
 )
 
 
-def get_current_user(
-    request: Request,
-    session: Annotated[Session, Depends(get_session)],
-) -> User:
-    credential_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Not authorized",
-    )
-    user_id: int | None = request.session.get("user_id")
-    if user_id is None:
-        raise credential_exception
-    user: User | None = session.get(User, user_id)
-    if user is None:
-        raise credential_exception
-    return user
-
-
 @router.post(
     "/login",
     summary="Login with an email and password",
