@@ -45,7 +45,7 @@ class User(UserBase, table=True):
         primary_key=True,
     )
     hashed_password: str = Field(
-        sa_type=String(60),
+        sa_type=String(255),
     )
     is_admin: bool = Field(
         default=False,
