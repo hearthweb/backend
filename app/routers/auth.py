@@ -6,7 +6,10 @@ from sqlmodel import Session, select
 from app.database import get_session
 from app.models.user import User, UserLogin, UserRead
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/auth",
+    tags=["Authentication"],
+)
 
 
 def get_current_user(
@@ -26,7 +29,11 @@ def get_current_user(
     return user
 
 
-@router.post("/login")
+@router.post(
+    "/login",
+    summary="Login with an email and password",
+    responses={401: {"description": "Invalid credentials"}},
+)
 def login(
     body: UserLogin,
     request: Request,
@@ -47,11 +54,9 @@ def login(
     return UserRead.model_validate(user)
 
 
-@router.post("/logout")
+@router.post(
+    "/logout",
+    summary="End the current session",
+)
 def logout(request: Request) -> None:
     request.session.clear()
-
-
-@router.get("/me")
-def me(user: Annotated[User, Depends(get_current_user)]) -> UserRead:
-    return UserRead.model_validate(user)
