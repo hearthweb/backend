@@ -1,39 +1,43 @@
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import Cookie, Depends, HTTPException, status
 from sqlmodel import Session
 
-from app.database import get_session
+from app.database import get_db
+from app.models.auth import LoginSession
 from app.models.user import User
 
-get_current_user_responses = {
-    401: {"description": "Not authenticated"},
-}
 
-get_current_admin_responses = {
-    **get_current_user_responses,
-    403: {"description": "Not authorized"},
+def get_login_session(
+    db: Annotated[Session, Depends(get_db)],
+    session_id: Annotated[str | None, Cookie()] = None,
+) -> LoginSession:
+    session = db.get(LoginSession, session_id)
+    if session is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+        )
+    return session
+
+
+get_login_session_responses = {
+    401: {"description": "Not authenticated"},
 }
 
 
 def get_current_user(
-    request: Request,
-    session: Annotated[Session, Depends(get_session)],
+    session: Annotated[LoginSession, Depends(get_login_session)],
 ) -> User:
     """
     Get the currently logged in user; raise an exception if there is none
     """
-    credential_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Not authenticated",
-    )
-    user_id: int | None = request.session.get("user_id")
-    if user_id is None:
-        raise credential_exception
-    user: User | None = session.get(User, user_id)
-    if user is None:
-        raise credential_exception
-    return user
+    return session.user
+
+
+get_current_user_responses = {
+    **get_login_session_responses,
+}
 
 
 def get_current_admin(
@@ -49,3 +53,9 @@ def get_current_admin(
             detail="Not authorized",
         )
     return User
+
+
+get_current_admin_responses = {
+    **get_current_user_responses,
+    403: {"description": "Not authorized"},
+}

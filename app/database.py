@@ -30,6 +30,6 @@ def init_db() -> None:
             session.commit()
 
 
-def get_session() -> Generator[Session, None, None]:
+def get_db() -> Generator[Session, None, None]:
     with Session(engine) as session:
         yield session

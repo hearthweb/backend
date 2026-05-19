@@ -3,7 +3,7 @@ from typing import Annotated, List
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
-from app.database import get_session
+from app.database import get_db
 from app.dependencies.auth import (
     get_current_admin,
     get_current_admin_responses,
@@ -26,9 +26,9 @@ router = APIRouter(
     responses={**get_current_admin_responses},
 )
 def users(
-    session: Annotated[Session, Depends(get_session)],
+    db: Annotated[Session, Depends(get_db)],
 ) -> List[UserRead]:
-    return session.exec(select(User))
+    return db.exec(select(User))
 
 
 @router.get(
@@ -53,8 +53,8 @@ def users_me(
 )
 def users_user_id(
     user_id: int,
-    session: Annotated[Session, Depends(get_session)],
+    db: Annotated[Session, Depends(get_db)],
 ) -> UserRead:
     return UserRead.model_validate(
-        get_or_404(session.get(User, user_id)),
+        get_or_404(db.get(User, user_id)),
     )

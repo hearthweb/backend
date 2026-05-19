@@ -1,9 +1,13 @@
+from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlmodel import Session, select
 
-from app.database import get_session
+from app.config import Environment, settings
+from app.database import get_db
+from app.dependencies.auth import get_login_session, get_login_session_responses
+from app.models.auth import LoginSession
 from app.models.user import User, UserLogin, UserRead
 
 router = APIRouter(
@@ -19,27 +23,46 @@ router = APIRouter(
 )
 def login(
     body: UserLogin,
-    request: Request,
-    session: Annotated[Session, Depends(get_session)],
+    response: Response,
+    db: Annotated[Session, Depends(get_db)],
 ) -> UserRead:
     credential_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid credentials",
     )
-    user = session.exec(select(User).where(User.email == body.email)).first()
+    user = db.exec(
+        select(User).where(User.email == body.email),
+    ).first()
     if user is None:
         User.dummy_verify_password(body.password)
         raise credential_exception
     if not user.verify_password(body.password):
         raise credential_exception
-    request.session.clear()
-    request.session["user_id"] = user.id
+    expires = datetime.now(timezone.utc) + timedelta(hours=1)
+    session = LoginSession(
+        user_id=user.id,
+        expires=expires,
+    )
+    db.add(session)
+    db.commit()
+    response.set_cookie(
+        key="session_id",
+        value=session.id,
+        httponly=True,
+        secure=settings.ENVIRONMENT == Environment.PROD,
+        expires=expires,
+    )
     return UserRead.model_validate(user)
 
 
 @router.post(
     "/logout",
     summary="End the current session",
+    responses={**get_login_session_responses},
 )
-def logout(request: Request) -> None:
-    request.session.clear()
+def logout(
+    session: Annotated[LoginSession, Depends(get_login_session)],
+    db: Annotated[Session, Depends(get_db)],
+) -> None:
+    db.delete(session)
+    db.commit()
