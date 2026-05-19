@@ -57,6 +57,7 @@ def login(
 
 @router.post(
     "/logout",
+    status_code=status.HTTP_204_NO_CONTENT,
     summary="End the current session",
     responses={**get_login_session_responses},
 )
