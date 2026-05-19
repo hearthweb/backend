@@ -3,7 +3,6 @@ name = "backend"
 version = "0.1.0"
 requires-python = ">=3.14"
 dependencies = [
-  "fastapi-users>=15.0.5",
   "fastapi[standard]>=0.136.1",
   "pwdlib[argon2]>=0.3.0",
   "pydantic-settings>=2.14.1",
