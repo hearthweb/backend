@@ -2,7 +2,6 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
-from starlette.middleware.sessions import SessionMiddleware
 
 from app.config import Environment, settings
 from app.database import init_db
@@ -23,10 +22,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-app.add_middleware(
-    SessionMiddleware,
-    secret_key=settings.SECRET_KEY,
-)
 
 app.include_router(auth.router)
 app.include_router(users.router)
