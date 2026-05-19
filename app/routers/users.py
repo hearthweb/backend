@@ -32,6 +32,17 @@ def users(
 
 
 @router.get(
+    "/me",
+    summary="Get the current user's information",
+    responses={**get_current_user_responses},
+)
+def users_me(
+    user: Annotated[User, Depends(get_current_user)],
+) -> UserRead:
+    return UserRead.model_validate(user)
+
+
+@router.get(
     "/{user_id}",
     summary="Get a specific user's information",
     dependencies=[Depends(get_current_admin)],
@@ -47,14 +58,3 @@ def users_user_id(
     return UserRead.model_validate(
         get_or_404(session.get(User, user_id)),
     )
-
-
-@router.get(
-    "/me",
-    summary="Get the current user's information",
-    responses={**get_current_user_responses},
-)
-def users_me(
-    user: Annotated[User, Depends(get_current_user)],
-) -> UserRead:
-    return UserRead.model_validate(user)
