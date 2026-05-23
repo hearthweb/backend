@@ -7,6 +7,7 @@ dependencies = [
   "pwdlib[argon2]>=0.3.0",
   "pydantic-settings>=2.14.1",
   "sqlmodel>=0.0.38",
+  "typer>=0.25.1",
 ]
 
 [tool.uv]
