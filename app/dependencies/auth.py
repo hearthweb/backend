@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import Cookie, Depends, HTTPException, status
-from sqlmodel import Session
+from sqlmodel import Session, func, select
 
 from app.database import get_db
 from app.models.auth import LoginSession
@@ -12,7 +12,11 @@ def get_login_session(
     db: Annotated[Session, Depends(get_db)],
     session_id: Annotated[str | None, Cookie()] = None,
 ) -> LoginSession:
-    session = db.get(LoginSession, session_id)
+    session = db.exec(
+        select(LoginSession)
+        .where(LoginSession.id == session_id)
+        .where(LoginSession.expires > func.now()),
+    ).first()
     if session is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
