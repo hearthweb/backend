@@ -1,7 +1,8 @@
+from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
 from fastapi import Cookie, Depends, HTTPException, status
-from sqlmodel import Session, func, select
+from sqlmodel import func, select
 
 from app.database import get_db
 from app.models.auth import LoginSession
@@ -9,20 +10,31 @@ from app.models.user import User
 
 
 def get_login_session(
-    db: Annotated[Session, Depends(get_db)],
     session_id: Annotated[str | None, Cookie()] = None,
 ) -> LoginSession:
-    session = db.exec(
-        select(LoginSession)
-        .where(LoginSession.id == session_id)
-        .where(LoginSession.expires > func.now()),
-    ).first()
-    if session is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated",
-        )
-    return session
+    """
+    Verify that a valid login session was provided and if it is less than 30
+    minutes from expiry, extend the session
+    """
+    with get_db() as db:
+        session = db.exec(
+            select(LoginSession)
+            .where(LoginSession.id == session_id)
+            .where(LoginSession.expires > func.now())
+            .with_for_update(),
+        ).first()
+        if session is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Not authenticated",
+            )
+        now = datetime.now(timezone.utc)
+        refresh_threshold = now + timedelta(minutes=30)
+        if session.expires < refresh_threshold:
+            session.expires = now + timedelta(hours=1)
+            db.add(session)
+            db.commit()
+        return session
 
 
 get_login_session_responses = {
