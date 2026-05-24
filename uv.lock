@@ -83,9 +83,13 @@ dependencies = [
     { name = "fastapi", extra = ["standard"] },
     { name = "pwdlib", extra = ["argon2"] },
     { name = "pydantic-settings" },
-    { name = "pytest" },
     { name = "sqlmodel" },
     { name = "typer" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
 ]
 
 [package.metadata]
@@ -93,10 +97,12 @@ requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.136.1" },
     { name = "pwdlib", extras = ["argon2"], specifier = ">=0.3.0" },
     { name = "pydantic-settings", specifier = ">=2.14.1" },
-    { name = "pytest", specifier = ">=9.0.3" },
     { name = "sqlmodel", specifier = ">=0.0.38" },
     { name = "typer", specifier = ">=0.25.1" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=9.0.3" }]
 
 [[package]]
 name = "certifi"
