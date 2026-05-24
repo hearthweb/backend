@@ -13,10 +13,14 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=9.0.3",
+    "pytest-env>=1.6.0",
 ]
 
 [project.scripts]
 cli = "cli:app"
+
+[tool.pytest_env]
+ENVIRONMENT = "testing"
 
 [tool.setuptools]
 packages = ["app"]
