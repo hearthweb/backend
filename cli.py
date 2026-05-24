@@ -2,16 +2,16 @@ from contextlib import contextmanager
 
 import typer
 
+from app import init
 from app.database import get_db, init_db
 from app.models.auth import User
-from app.utils import init_data
 
 app = typer.Typer()
 
 
 @app.callback()
 def startup():
-    init_data()
+    init()
 
 
 @app.command(

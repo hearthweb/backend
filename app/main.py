@@ -1,17 +1,27 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 
 from app.config import Environment, settings
 from app.routers import auth, users
-from app.utils import init_data
+
+
+def init():
+    """
+    Initialize the application
+    """
+    if settings.ENVIRONMENT == Environment.PROD and settings.SECRET_KEY == "":
+        raise RuntimeError("SECRET_KEY must be set in production")
+    Path(settings.DATA_DIR).mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if settings.ENVIRONMENT == Environment.PROD and settings.SECRET_KEY == "":
-        raise RuntimeError("SECRET_KEY must be set in production")
-    init_data()
+    init()
     yield
 
 
