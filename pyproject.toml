@@ -10,6 +10,13 @@ dependencies = [
   "typer>=0.25.1",
 ]
 
+[project.scripts]
+cli = "cli:app"
+
+[tool.setuptools]
+packages = ["app"]
+py-modules = ["cli"]
+
 [tool.uv]
 managed = true
 package = true
