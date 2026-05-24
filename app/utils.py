@@ -1,6 +1,9 @@
+from pathlib import Path
 from typing import TypeVar
 
 from fastapi import HTTPException, status
+
+from app.config import settings
 
 get_or_404_responses = {
     404: {"description": "Object not found"},
@@ -19,3 +22,13 @@ def get_or_404(obj: T | None) -> T:
             detail="Object not found",
         )
     return obj
+
+
+def init_data():
+    """
+    Initialize the data directory
+    """
+    Path(settings.DATA_DIR).mkdir(
+        parents=True,
+        exist_ok=True,
+    )
