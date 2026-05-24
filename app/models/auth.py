@@ -1,7 +1,7 @@
 import secrets
 from datetime import datetime
 
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import DateTime, Field, Relationship, SQLModel
 
 from app.models.user import User
 
@@ -17,4 +17,6 @@ class LoginSession(SQLModel, table=True):
     )
     user_id: int = Field(foreign_key="user.id")
     user: User | None = Relationship()
-    expires: datetime
+    expires: datetime = Field(
+        sa_type=DateTime(timezone=True),
+    )
