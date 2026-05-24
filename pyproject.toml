@@ -3,7 +3,7 @@ name = "backend"
 version = "0.1.0"
 requires-python = ">=3.14"
 dependencies = [
-  "fastapi[standard]>=0.136.1",
+  "fastapi[standard]>=0.136.3",
   "pwdlib[argon2]>=0.3.0",
   "pydantic-settings>=2.14.1",
   "sqlmodel>=0.0.38",
@@ -13,14 +13,10 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=9.0.3",
-    "pytest-env>=1.6.0",
 ]
 
 [project.scripts]
 cli = "cli:app"
-
-[tool.pytest_env]
-ENVIRONMENT = "testing"
 
 [tool.setuptools]
 packages = ["app"]

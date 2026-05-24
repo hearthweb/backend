@@ -1,6 +1,5 @@
 from enum import Enum
 from pathlib import Path
-from typing import Literal
 
 from pydantic_settings import BaseSettings
 
@@ -8,16 +7,11 @@ from pydantic_settings import BaseSettings
 class Environment(Enum):
     DEV = "dev"
     PROD = "prod"
-    TESTING = "testing"
 
 
 class Settings(BaseSettings):
     # Environment the application is running under
-    ENVIRONMENT: Literal[
-        Environment.DEV,
-        Environment.PROD,
-        Environment.TESTING,
-    ] = Environment.DEV
+    ENVIRONMENT: Environment = Environment.DEV
 
     # Location for persistent storage
     DATA_DIR: str = "data"
@@ -47,8 +41,6 @@ class Settings(BaseSettings):
                 return "sqlite:///{path}".format(
                     path=Path(self.DATA_DIR) / "db.sqlite3",
                 )
-            case Environment.TESTING:
-                return "sqlite://"
 
 
 settings = Settings()
