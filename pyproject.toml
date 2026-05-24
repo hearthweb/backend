@@ -12,4 +12,4 @@ dependencies = [
 
 [tool.uv]
 managed = true
-package = false
+package = true
