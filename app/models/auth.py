@@ -1,9 +1,10 @@
 import secrets
 from datetime import datetime
 
-from sqlmodel import DateTime, Field, Relationship, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 
 from app.models.user import User
+from app.types import TZDateTime
 
 
 def generate_id() -> str:
@@ -18,5 +19,5 @@ class LoginSession(SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id")
     user: User | None = Relationship()
     expires: datetime = Field(
-        sa_type=DateTime(timezone=True),
+        sa_type=TZDateTime(),
     )
