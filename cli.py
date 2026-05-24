@@ -1,7 +1,7 @@
 import typer
 
 from app import init
-from app.database import get_db, init_db
+from app.database import db_context, init_db
 from app.models.auth import User
 
 app = typer.Typer()
@@ -23,7 +23,7 @@ def create_admin(
         confirmation_prompt=True,
     ),
 ):
-    with get_db() as db:
+    with db_context() as db:
         user = User(
             email=email,
             is_admin=True,

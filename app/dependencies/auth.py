@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Cookie, Depends, HTTPException, status
 from sqlmodel import func, select
 
-from app.database import get_db
+from app.database import db_context
 from app.models.auth import LoginSession
 from app.models.user import User
 
@@ -16,7 +16,7 @@ def get_login_session(
     Verify that a valid login session was provided and if it is less than 30
     minutes from expiry, extend the session
     """
-    with get_db() as db:
+    with db_context() as db:
         session = db.exec(
             select(LoginSession)
             .where(LoginSession.id == session_id)
