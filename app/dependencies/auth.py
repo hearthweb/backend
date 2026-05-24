@@ -22,7 +22,7 @@ def get_login_session(
             .where(LoginSession.id == session_id)
             .where(LoginSession.expires > func.now())
             .with_for_update(),
-        ).first()
+        ).one_or_none()
         if session is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

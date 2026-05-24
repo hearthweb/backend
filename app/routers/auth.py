@@ -32,7 +32,7 @@ def login(
     )
     user = db.exec(
         select(User).where(User.email == body.email),
-    ).first()
+    ).one_or_none()
     if user is None:
         User.dummy_verify_password(body.password)
         raise credential_exception
