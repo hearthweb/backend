@@ -1,5 +1,3 @@
-from contextlib import contextmanager
-
 import typer
 
 from app import init
@@ -25,7 +23,7 @@ def create_admin(
         confirmation_prompt=True,
     ),
 ):
-    with contextmanager(get_db)() as db:
+    with get_db() as db:
         user = User(
             email=email,
             is_admin=True,
