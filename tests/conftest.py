@@ -8,7 +8,12 @@ from sqlmodel import Session, SQLModel, StaticPool, create_engine
 from app.database import get_db
 from app.main import app
 from app.models.user import User
-from tests.constants import USER_EMAIL, USER_PASSWORD
+from tests.constants import (
+    ADMIN_EMAIL,
+    ADMIN_PASSWORD,
+    USER_EMAIL,
+    USER_PASSWORD,
+)
 
 
 @pytest.fixture(name="db")
@@ -33,13 +38,42 @@ def client_fixture(db: Session) -> Generator[TestClient, None, None]:
     app.dependency_overrides.clear()
 
 
-@pytest.fixture(name="user")
-def user_fixture(db: Session) -> User:
-    user = User(email=USER_EMAIL, is_admin=True)
-    user.set_password(USER_PASSWORD)
+def create_user(db: Session, email: str, password: str, is_admin: bool) -> User:
+    user = User(email=email, is_admin=is_admin)
+    user.set_password(password)
     db.add(user)
     db.commit()
     return user
+
+
+@pytest.fixture(name="admin")
+def admin_fixture(db: Session) -> User:
+    return create_user(db, ADMIN_EMAIL, ADMIN_PASSWORD, True)
+
+
+@pytest.fixture(name="user")
+def user_fixture(db: Session) -> User:
+    return create_user(db, ADMIN_EMAIL, ADMIN_PASSWORD, False)
+
+
+def login_user(client: TestClient, email: str, password: str) -> None:
+    response = client.post(
+        "/auth/login",
+        json={
+            "email": email,
+            "password": password,
+        },
+    )
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.fixture(name="logged_in_admin")
+def logged_in_admin_fixture(
+    client: TestClient,
+    admin: User,
+) -> User:
+    login_user(client, ADMIN_EMAIL, ADMIN_PASSWORD)
+    return admin
 
 
 @pytest.fixture(name="logged_in_user")
@@ -47,12 +81,6 @@ def logged_in_user_fixture(
     client: TestClient,
     user: User,
 ) -> User:
-    response = client.post(
-        "/auth/login",
-        json={
-            "email": USER_EMAIL,
-            "password": USER_PASSWORD,
-        },
-    )
-    assert response.status_code == status.HTTP_200_OK
+
+    login_user(client, USER_EMAIL, USER_PASSWORD)
     return user
