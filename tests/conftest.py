@@ -53,7 +53,7 @@ def admin_fixture(db: Session) -> User:
 
 @pytest.fixture(name="user")
 def user_fixture(db: Session) -> User:
-    return create_user(db, ADMIN_EMAIL, ADMIN_PASSWORD, False)
+    return create_user(db, USER_EMAIL, USER_PASSWORD, False)
 
 
 def login_user(client: TestClient, email: str, password: str) -> None:
