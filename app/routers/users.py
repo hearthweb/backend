@@ -68,7 +68,7 @@ def users_user_id(
         **get_current_admin_responses,
     },
 )
-def users_user_create(
+def users_create(
     body: UserCreateEditAdmin,
     db: Annotated[Session, Depends(get_db)],
 ) -> UserRead:
