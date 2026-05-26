@@ -12,7 +12,7 @@ class UserLogin(SQLModel):
     password: str
 
 
-class UserBase(Base):
+class UserBase(SQLModel):
     email: str = Field(
         sa_type=String(255),
         unique=True,
@@ -28,31 +28,30 @@ class UserBase(Base):
     )
 
 
-class UserRead(UserBase):
-    id: int
-    is_admin: bool
+class UserAdmin(SQLModel):
+    is_admin: bool = Field(
+        default=False,
+    )
+
+
+class UserRead(Base, UserBase, UserAdmin):
+    pass
 
 
 class UserCreateEdit(UserBase):
     password: str = Field()
 
 
-class UserCreateEditAdmin(UserCreateEdit):
+class UserCreateEditAdmin(UserAdmin, UserCreateEdit):
     is_admin: bool = Field(
         default=False,
     )
 
 
-class User(UserBase, table=True):
-    id: int | None = Field(
-        default=None,
-        primary_key=True,
-    )
+class User(Base, UserBase, UserAdmin, table=True):
     hashed_password: str = Field(
+        default="",
         sa_type=String(255),
-    )
-    is_admin: bool = Field(
-        default=False,
     )
 
     def set_password(self, password: str) -> None:
