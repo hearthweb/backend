@@ -96,7 +96,7 @@ def users_user_id_delete(
     user = get_or_404(
         db.exec(
             select(User).where(User.id == user_id).with_for_update(),
-        ).scalar_one_or_none(),
+        ).one_or_none(),
     )
     db.delete(user)
     db.commit()
