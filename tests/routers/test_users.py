@@ -55,3 +55,14 @@ def test_users_create(
     assert response.status_code == status.HTTP_200_OK
     json = response.json()
     assert json == dump(UserRead, db.get(User, json["id"]))
+
+
+def test_users_id_delete(
+    client: TestClient,
+    logged_in_admin: User,
+    user: User,
+    db: Session,
+):
+    response = client.delete(f"/users/{user.id}")
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert db.get(User, user.id) is None
