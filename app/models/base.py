@@ -5,8 +5,8 @@ from sqlmodel import Field, SQLModel, func
 from app.types import TZDateTime
 
 
-def now() -> datetime:
-    return datetime.now(timezone.utc)
+def zero() -> datetime:
+    return datetime.fromtimestamp(0, tz=timezone.utc)
 
 
 class Base(SQLModel):
@@ -15,14 +15,14 @@ class Base(SQLModel):
         primary_key=True,
     )
     created_at: datetime = Field(
-        default_factory=now,
+        default_factory=zero,
         sa_type=TZDateTime(),
         sa_column_kwargs={
             "server_default": func.now(),
         },
     )
     updated_at: datetime = Field(
-        default_factory=now,
+        default_factory=zero,
         sa_type=TZDateTime(),
         sa_column_kwargs={
             "onupdate": func.now(),
