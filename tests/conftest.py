@@ -1,4 +1,4 @@
-from typing import Generator
+from collections.abc import Generator
 
 import pytest
 from fastapi import status
@@ -17,7 +17,7 @@ from tests.constants import (
 
 
 @pytest.fixture(name="db")
-def db_fixture() -> Generator[Session, None, None]:
+def db_fixture() -> Generator[Session]:
     engine = create_engine(
         "sqlite://",
         connect_args={"check_same_thread": False},
@@ -29,8 +29,8 @@ def db_fixture() -> Generator[Session, None, None]:
 
 
 @pytest.fixture(name="client", autouse=True)
-def client_fixture(db: Session) -> Generator[TestClient, None, None]:
-    def override_get_db() -> Generator[Session, None, None]:
+def client_fixture(db: Session) -> Generator[TestClient]:
+    def override_get_db() -> Generator[Session]:
         yield db
 
     app.dependency_overrides[get_db] = override_get_db

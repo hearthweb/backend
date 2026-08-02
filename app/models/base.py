@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlmodel import Field, SQLModel, func
 
@@ -6,7 +6,7 @@ from app.types import TZDateTime
 
 
 def zero() -> datetime:
-    return datetime.fromtimestamp(0, tz=timezone.utc)
+    return datetime.fromtimestamp(0, tz=UTC)
 
 
 class Base(SQLModel):

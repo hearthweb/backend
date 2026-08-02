@@ -1,4 +1,4 @@
-from typing import Annotated, List
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 from sqlmodel import Session, select
@@ -27,7 +27,7 @@ router = APIRouter(
 )
 def users(
     db: Annotated[Session, Depends(get_db)],
-) -> List[UserRead]:
+) -> list[UserRead]:
     return db.exec(select(User))
 
 

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import types
 from sqlalchemy.engine import Dialect
@@ -15,5 +15,5 @@ class TZDateTime(types.TypeDecorator):
         dialect: Dialect,
     ) -> datetime:
         if value is not None and dialect.name == "sqlite":
-            return value.replace(tzinfo=timezone.utc)
+            return value.replace(tzinfo=UTC)
         return value

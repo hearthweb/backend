@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 from fastapi import Cookie, Depends, HTTPException, status
@@ -28,7 +28,7 @@ def get_login_session(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not authenticated",
         )
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     refresh_threshold = now + timedelta(minutes=30)
     if session.expires < refresh_threshold:
         session.expires = now + timedelta(hours=1)

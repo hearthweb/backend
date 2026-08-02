@@ -1,4 +1,4 @@
-from typing import Generator
+from collections.abc import Generator
 
 from sqlmodel import Session, SQLModel, create_engine
 
@@ -24,6 +24,6 @@ def db_context():
     return Session(engine)
 
 
-def get_db() -> Generator[Session, None, None]:
+def get_db() -> Generator[Session]:
     with db_context() as session:
         yield session

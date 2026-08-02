@@ -30,17 +30,9 @@ class Settings(BaseSettings):
     def DATABASE_URL(self) -> str:
         match self.ENVIRONMENT:
             case Environment.PROD:
-                return "postgresql://{user}:{password}@{host}:{port}/{name}".format(
-                    user=self.DB_USER,
-                    password=self.DB_PASSWORD,
-                    host=self.DB_HOST,
-                    port=self.DB_PORT,
-                    name=self.DB_NAME,
-                )
+                return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
             case Environment.DEV:
-                return "sqlite:///{path}".format(
-                    path=Path(self.DATA_DIR) / "db.sqlite3",
-                )
+                return f"sqlite:///{Path(self.DATA_DIR) / 'db.sqlite3'}"
 
 
 settings = Settings()

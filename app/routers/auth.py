@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
@@ -38,7 +38,7 @@ def login(
         raise credential_exception
     if not user.verify_password(body.password):
         raise credential_exception
-    expires = datetime.now(timezone.utc) + timedelta(hours=1)
+    expires = datetime.now(UTC) + timedelta(hours=1)
     session = LoginSession(
         user_id=user.id,
         expires=expires,
