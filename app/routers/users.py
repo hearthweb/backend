@@ -24,6 +24,7 @@ router = APIRouter(
     summary="Get a list of all users",
     dependencies=[Depends(get_current_admin)],
     responses={**get_current_admin_responses},
+    operation_id="users",
 )
 def users(
     db: Annotated[Session, Depends(get_db)],
@@ -35,6 +36,7 @@ def users(
     "/me",
     summary="Get the current user's information",
     responses={**get_current_user_responses},
+    operation_id="usersMe",
 )
 def users_me(
     user: Annotated[User, Depends(get_current_user)],
@@ -50,6 +52,7 @@ def users_me(
         **get_current_admin_responses,
         **get_or_404_responses,
     },
+    operation_id="usersById",
 )
 def users_user_id(
     user_id: int,
@@ -67,6 +70,7 @@ def users_user_id(
     responses={
         **get_current_admin_responses,
     },
+    operation_id="usersCreate",
 )
 def users_create(
     body: UserCreateEditAdmin,
@@ -88,6 +92,7 @@ def users_create(
         **get_current_admin_responses,
         **get_or_404_responses,
     },
+    operation_id="usersByIdDelete",
 )
 def users_user_id_delete(
     user_id: int,
