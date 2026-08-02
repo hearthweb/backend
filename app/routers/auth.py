@@ -20,6 +20,7 @@ router = APIRouter(
     "/login",
     summary="Login with an email and password",
     responses={401: {"description": "Invalid credentials"}},
+    operation_id="login",
 )
 def login(
     body: UserLogin,
@@ -60,6 +61,7 @@ def login(
     status_code=status.HTTP_204_NO_CONTENT,
     summary="End the current session",
     responses={**get_login_session_responses},
+    operation_id="logout",
 )
 def logout(
     session: Annotated[LoginSession, Depends(get_login_session)],
