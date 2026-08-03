@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
@@ -15,6 +15,7 @@ from app.models.credential import (
     CredentialPublic,
 )
 from app.models.user import User
+from app.utils import get_or_404, get_or_404_responses
 
 router = APIRouter(
     prefix="/credentials",
@@ -62,3 +63,27 @@ def credentials_create(
     db.commit()
     db.refresh(credential)
     return credential
+
+
+@router.delete(
+    "/{credential_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete a specific credential",
+    dependencies=[Depends(get_current_admin)],
+    responses={
+        **get_current_admin_responses,
+        **get_or_404_responses,
+    },
+    operation_id="credentialsByIdDelete",
+)
+def credentials_by_id_delete(
+    credential_id: int,
+    db: Annotated[Session, Depends(get_db)],
+) -> None:
+    credential = get_or_404(
+        db.exec(
+            select(Credential).where(Credential.id == credential_id).with_for_update(),
+        ).one_or_none(),
+    )
+    db.delete(credential)
+    db.commit()
