@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
+from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
 from app.database import get_db
@@ -11,6 +12,7 @@ from app.dependencies.auth import (
 from app.models.credential import (
     Credential,
     CredentialCreateEdit,
+    CredentialPublic,
 )
 from app.models.user import User
 
@@ -31,8 +33,10 @@ router = APIRouter(
 )
 def credentials(
     db: Annotated[Session, Depends(get_db)],
-) -> list[Credential]:
-    return db.exec(select(Credential))
+) -> list[CredentialPublic]:
+    return db.exec(
+        select(Credential).options(selectinload(Credential.user)),
+    )
 
 
 @router.post(
@@ -47,7 +51,7 @@ def credentials_create(
     body: CredentialCreateEdit,
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[User, Depends(get_current_admin)],
-) -> Credential:
+) -> CredentialPublic:
     credential = Credential.model_validate(
         body,
         update={

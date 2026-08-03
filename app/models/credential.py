@@ -2,7 +2,7 @@ from sqlalchemy import String
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.models.base import Base
-from app.models.user import User
+from app.models.user import User, UserRead
 
 
 class CredentialCreateEdit(SQLModel):
@@ -19,6 +19,13 @@ class CredentialCreateEdit(SQLModel):
     )
 
 
-class Credential(Base, CredentialCreateEdit, table=True):
+class CredentialRead(Base, CredentialCreateEdit):
     user_id: int = Field(foreign_key="user.id")
+
+
+class Credential(CredentialRead, table=True):
     user: User | None = Relationship()
+
+
+class CredentialPublic(CredentialRead):
+    user: UserRead | None = None
