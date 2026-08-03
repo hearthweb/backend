@@ -28,27 +28,37 @@ class UserBase(SQLModel):
     )
 
 
-class UserAdmin(SQLModel):
+class UserAdminBase(SQLModel):
     is_admin: bool = Field(
         default=False,
     )
 
 
-class UserRead(Base, UserBase, UserAdmin):
-    pass
+class UserRead(Base, UserBase, UserAdminBase):
+    """
+    Fields that are returned to any user
+    """
 
 
 class UserCreateEdit(UserBase):
+    """
+    Fields that can be edited by any user
+    """
+
     password: str = Field()
 
 
-class UserCreateEditAdmin(UserAdmin, UserCreateEdit):
-    is_admin: bool = Field(
-        default=False,
-    )
+class UserCreateEditAdmin(UserCreateEdit, UserAdminBase):
+    """
+    Fields that can be edited by an admin
+    """
 
 
-class User(Base, UserBase, UserAdmin, table=True):
+class User(UserRead, table=True):
+    """
+    Fields that are stored in the database
+    """
+
     hashed_password: str = Field(
         default="",
         sa_type=String(255),
