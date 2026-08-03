@@ -17,7 +17,7 @@ class LoginSession(SQLModel, table=True):
         primary_key=True,
     )
     user_id: int = Field(foreign_key="user.id")
-    user: User | None = Relationship()
+    user: User = Relationship()
     expires: datetime = Field(
         sa_type=TZDateTime(),
     )

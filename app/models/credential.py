@@ -24,8 +24,8 @@ class CredentialRead(Base, CredentialCreateEdit):
 
 
 class Credential(CredentialRead, table=True):
-    user: User | None = Relationship()
+    user: User = Relationship()
 
 
 class CredentialPublic(CredentialRead):
-    user: UserRead | None = None
+    user: UserRead
