@@ -69,7 +69,7 @@ def get_current_admin(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized",
         )
-    return User
+    return user
 
 
 get_current_admin_responses = {
