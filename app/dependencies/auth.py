@@ -7,6 +7,7 @@ from sqlmodel import Session, func, select
 from app.database import get_db
 from app.models.auth import LoginSession
 from app.models.user import User
+from app.types import create_http_exception_response
 
 
 def get_login_session(
@@ -38,7 +39,7 @@ def get_login_session(
 
 
 get_login_session_responses = {
-    401: {"description": "Not authenticated"},
+    **create_http_exception_response(401, "Invalid credentials"),
 }
 
 
@@ -73,5 +74,5 @@ def get_current_admin(
 
 get_current_admin_responses = {
     **get_current_user_responses,
-    403: {"description": "Not authorized"},
+    **create_http_exception_response(403, "Not authorized"),
 }

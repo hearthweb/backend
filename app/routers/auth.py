@@ -9,6 +9,7 @@ from app.database import get_db
 from app.dependencies.auth import get_login_session, get_login_session_responses
 from app.models.auth import LoginSession
 from app.models.user import User, UserLogin, UserRead
+from app.types import create_http_exception_response
 
 router = APIRouter(
     prefix="/auth",
@@ -19,7 +20,9 @@ router = APIRouter(
 @router.post(
     "/login",
     summary="Login with an email and password",
-    responses={401: {"description": "Invalid credentials"}},
+    responses={
+        **create_http_exception_response(401, "Invalid credentials"),
+    },
     operation_id="login",
 )
 def login(
