@@ -5,7 +5,7 @@ from app.models.base import Base
 from app.models.user import User, UserRead
 
 
-class CredentialCreateEdit(SQLModel):
+class CredentialBase(SQLModel):
     service: str = Field(
         sa_type=String(255),
     )
@@ -19,7 +19,7 @@ class CredentialCreateEdit(SQLModel):
     )
 
 
-class CredentialRead(Base, CredentialCreateEdit):
+class CredentialRead(Base, CredentialBase):
     user_id: int = Field(foreign_key="user.id")
 
 
