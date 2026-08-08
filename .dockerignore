@@ -1,0 +1,16 @@
+/.git/
+/.github/
+/.pytest_cache/
+/.ruff_cache/
+/.venv/
+/.vscode/
+/.dockerignore
+/.editorconfig
+/.gitignore
+/data/
+/tests/
+/Dockerfile
+/LICENSE.txt
+/README.md
+/*.egg-info
+__pycache__/
