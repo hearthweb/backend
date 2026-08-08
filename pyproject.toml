@@ -3,17 +3,17 @@ name = "backend"
 version = "0.1.0"
 requires-python = ">=3.14"
 dependencies = [
-  "fastapi[standard]>=0.136.3",
+  "fastapi[standard]>=0.141.1",
   "pwdlib[argon2]>=0.3.0",
-  "pydantic-settings>=2.14.1",
+  "pydantic-settings>=2.15.0",
   "pytest-cov>=7.1.0",
-  "sqlmodel>=0.0.38",
-  "typer>=0.25.1",
+  "sqlmodel>=0.0.39",
+  "typer>=0.27.1",
 ]
 
 [dependency-groups]
 dev = [
-    "pytest>=9.0.3",
+    "pytest>=9.1.1",
 ]
 
 [project.scripts]
