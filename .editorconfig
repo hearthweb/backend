@@ -5,8 +5,8 @@ end_of_line = lf
 indent_style = space
 insert_final_newline = true
 
-[*.{json,toml}]
+[*.json]
 indent_size = 2
 
-[*.py]
+[*.{py,toml}]
 indent_size = 4
