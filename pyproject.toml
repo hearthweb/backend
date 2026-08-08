@@ -3,22 +3,27 @@ name = "backend"
 version = "0.1.0"
 requires-python = ">=3.14"
 dependencies = [
-  "fastapi[standard]>=0.141.1",
-  "pwdlib[argon2]>=0.3.0",
-  "pydantic-settings>=2.15.0",
-  "pytest-cov>=7.1.0",
-  "sqlmodel>=0.0.39",
-  "typer>=0.27.1",
+    "fastapi[standard]>=0.141.1",
+    "pwdlib[argon2]>=0.3.0",
+    "pydantic-settings>=2.15.0",
+    "sqlmodel>=0.0.39",
+    "typer>=0.27.1",
 ]
 
 [dependency-groups]
 dev = [
     "httpx2>=2.9.1",
     "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
 ]
 
 [project.scripts]
 cli = "cli:app"
+
+[project.optional-dependencies]
+postgres = [
+    "psycopg2-binary>=2.9.12",
+]
 
 [tool.setuptools]
 packages = ["app"]
