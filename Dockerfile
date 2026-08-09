@@ -52,5 +52,8 @@ USER app
 # Specify the volume for uploads
 VOLUME /data
 
+# Specify the port to listen on
+EXPOSE 8000
+
 # Specify the command to run
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
