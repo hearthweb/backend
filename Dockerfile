@@ -1,10 +1,11 @@
-ARG PYTHON_VERSION=3.14-slim
+ARG PYTHON_VERSION=3.14
+ARG UV_VERSION=0.12.3
 
 
-FROM python:${PYTHON_VERSION} AS builder
+FROM python:${PYTHON_VERSION}-slim AS builder
 
 # Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:${UV_VERSION} /uv /uvx /bin/
 
 # Set the working directory
 WORKDIR /app
@@ -21,7 +22,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     uv sync --frozen --no-dev --no-install-project --extra postgres
 
-# Copy the rest of the source files
+# Copy the source files
 COPY . .
 
 # Sync the project
@@ -29,7 +30,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --extra postgres
 
 
-FROM python:${PYTHON_VERSION}
+FROM python:${PYTHON_VERSION}-slim
 
 # Set the working directory
 WORKDIR /app
