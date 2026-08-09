@@ -12,7 +12,7 @@ The officially supported way of running the backend is via Docker container:
 ```
 docker run \
     --name backend \
-    -P \
+    -p 8000:8000 \
     --env SECRET_KEY=Password1234 \
     ghcr.io/hearthweb/backend:latest
 ```
