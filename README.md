@@ -5,4 +5,14 @@
 
 This repository contains the backend for Hearth. It communicates with the database, handles authentication, serialization, job management, etc.
 
-TODO
+### Running the Application
+
+The officially supported way of running the backend is via Docker container:
+
+```
+docker run \
+    --name backend \
+    -P \
+    --env SECRET_KEY=Password1234 \
+    ghcr.io/hearthweb/backend:latest
+```
