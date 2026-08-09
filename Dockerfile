@@ -41,11 +41,16 @@ RUN groupadd -r app && \
 # Copy the files from the builder
 COPY --from=builder --chown=app:app /app /app
 
-# Add the virtualenv to $PATH
-ENV PATH="/app/.venv/bin:$PATH"
+# Set a few important environment variables
+ENV UPLOAD_DIR=/data \
+    ENVIRONMENT=prod \
+    PATH="/app/.venv/bin:$PATH"
 
 # Specify the user
 USER app
+
+# Specify the volume for uploads
+VOLUME /data
 
 # Specify the command to run
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

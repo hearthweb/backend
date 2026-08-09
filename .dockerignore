@@ -7,10 +7,11 @@
 /.dockerignore
 /.editorconfig
 /.gitignore
-/data/
 /tests/
+/upload/
+/*.egg-info/
 /Dockerfile
 /LICENSE.txt
 /README.md
-/*.egg-info
+/db.sqlite3
 __pycache__/

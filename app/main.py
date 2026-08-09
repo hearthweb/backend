@@ -13,7 +13,7 @@ def init():
     """
     if settings.ENVIRONMENT == Environment.PROD and settings.SECRET_KEY == "":
         raise RuntimeError("SECRET_KEY must be set in production")
-    Path(settings.DATA_DIR).mkdir(
+    Path(settings.UPLOAD_DIR).mkdir(
         parents=True,
         exist_ok=True,
     )

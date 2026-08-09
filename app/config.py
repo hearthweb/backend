@@ -1,5 +1,4 @@
 from enum import Enum
-from pathlib import Path
 
 from pydantic_settings import BaseSettings
 
@@ -13,8 +12,8 @@ class Settings(BaseSettings):
     # Environment the application is running under
     ENVIRONMENT: Environment = Environment.DEV
 
-    # Location for persistent storage
-    DATA_DIR: str = "data"
+    # Location for uploaded files
+    UPLOAD_DIR: str = "upload"
 
     # Database connection information
     DB_USER: str = "postgres"
@@ -32,7 +31,7 @@ class Settings(BaseSettings):
             case Environment.PROD:
                 return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
             case Environment.DEV:
-                return f"sqlite:///{Path(self.DATA_DIR) / 'db.sqlite3'}"
+                return f"sqlite:///{'db.sqlite3'}"
 
 
 settings = Settings()

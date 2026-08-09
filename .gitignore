@@ -1,6 +1,7 @@
 /.pytest_cache/
-/.ruff_cache
-/.venv
-/data
-/*.egg-info
+/.ruff_cache/
+/.venv/
+/upload/
+/*.egg-info/
+/db.sqlite3
 __pycache__/
