@@ -2,10 +2,13 @@ ARG PYTHON_VERSION=3.14
 ARG UV_VERSION=0.12.3
 
 
+FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
+
+
 FROM python:${PYTHON_VERSION}-slim AS builder
 
 # Install uv
-COPY --from=ghcr.io/astral-sh/uv:${UV_VERSION} /uv /uvx /bin/
+COPY --from=uv /uv /uvx /bin/
 
 # Set the working directory
 WORKDIR /app
