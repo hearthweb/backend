@@ -4,7 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI
 
 from app.config import Environment, settings
-from app.routers import auth, credentials, internal, users
+from app.routers import auth, credentials, documents, internal, users
 
 
 def init():
@@ -29,6 +29,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 app.include_router(auth.router)
+app.include_router(documents.router)
 app.include_router(credentials.router)
 app.include_router(internal.router)
 app.include_router(users.router)
