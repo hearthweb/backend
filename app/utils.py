@@ -1,4 +1,9 @@
-from fastapi import HTTPException, status
+import shutil
+from pathlib import Path
+
+from fastapi import HTTPException, UploadFile, status
+
+from app.config import settings
 
 get_or_404_responses = {
     404: {"description": "Object not found"},
@@ -15,3 +20,19 @@ def get_or_404[T](obj: T | None) -> T:
             detail="Object not found",
         )
     return obj
+
+
+def upload_file(
+    file: UploadFile,
+    path: str,
+) -> None:
+    """
+    Upload a file to the provided path
+    """
+    p = Path(settings.UPLOAD_DIR) / path
+    p.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+    with p.open("wb") as w:
+        shutil.copyfileobj(file.file, w)

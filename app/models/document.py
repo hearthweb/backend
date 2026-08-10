@@ -18,9 +18,6 @@ class DocumentCreateEdit(SQLModel):
     name: str = Field(
         sa_type=String(255),
     )
-    filename: str = Field(
-        sa_type=String(255),
-    )
     category_id: int = Field(
         foreign_key="documentcategory.id",
         index=True,
@@ -28,8 +25,14 @@ class DocumentCreateEdit(SQLModel):
 
 
 class DocumentRead(Base, DocumentCreateEdit):
+    filename: str = Field(
+        sa_type=String(255),
+    )
     filesize: int = Field(
         sa_type=BigInteger(),
+    )
+    filetype: str = Field(
+        sa_type=String(100),
     )
 
 

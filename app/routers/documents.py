@@ -1,6 +1,7 @@
+from pathlib import Path
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, Form, UploadFile
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
@@ -12,9 +13,9 @@ from app.dependencies.auth import (
 from app.models.document import (
     Document,
     DocumentCategory,
-    DocumentCreateEdit,
     DocumentPublic,
 )
+from app.utils import upload_file
 
 router = APIRouter(
     prefix="/documents",
@@ -64,16 +65,23 @@ def documents(
     operation_id="documentsCreate",
 )
 def documents_create(
-    body: DocumentCreateEdit,
+    file: Annotated[UploadFile, File()],
+    name: Annotated[str, Form()],
+    category_id: Annotated[int, Form()],
     db: Annotated[Session, Depends(get_db)],
 ) -> DocumentPublic:
     document = Document.model_validate(
-        body,
-        update={
-            "filesize": 0,
+        {
+            "name": name,
+            "category_id": category_id,
+            "filename": file.filename,
+            "filesize": file.size,
+            "filetype": file.content_type,
         },
     )
     db.add(document)
+    db.flush()
+    upload_file(file, Path("documents") / str(document.id))
     db.commit()
     db.refresh(document)
     return document
