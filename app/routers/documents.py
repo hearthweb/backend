@@ -1,7 +1,6 @@
-from pathlib import Path
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, Form, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Response, UploadFile, status
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
@@ -15,7 +14,7 @@ from app.models.document import (
     DocumentCategory,
     DocumentPublic,
 )
-from app.utils import upload_file
+from app.utils import get_or_404, get_or_404_responses, upload_file
 
 router = APIRouter(
     prefix="/documents",
@@ -81,7 +80,35 @@ def documents_create(
     )
     db.add(document)
     db.flush()
-    upload_file(file, Path("documents") / str(document.id))
+    upload_file(file, document.absolute_path)
     db.commit()
     db.refresh(document)
     return document
+
+
+@router.get(
+    "/{document_id}/download",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Download a document",
+    dependencies=[Depends(get_current_admin)],
+    responses={
+        **get_current_admin_responses,
+        **get_or_404_responses,
+    },
+    operation_id="documentsByIdDownload",
+)
+def documents_by_id_download(
+    document_id: int,
+    db: Annotated[Session, Depends(get_db)],
+    response: Response,
+) -> None:
+    document = get_or_404(
+        db.exec(
+            select(Document).where(Document.id == document_id),
+        ).one_or_none(),
+    )
+    response.headers["X-Accel-Redirect"] = document.absolute_path
+    response.headers["Content-Type"] = document.filetype
+    response.headers["Content-Disposition"] = (
+        f'attachment; filename="{document.filename}"'
+    )

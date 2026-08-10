@@ -3,8 +3,6 @@ from pathlib import Path
 
 from fastapi import HTTPException, UploadFile, status
 
-from app.config import settings
-
 get_or_404_responses = {
     404: {"description": "Object not found"},
 }
@@ -29,7 +27,7 @@ def upload_file(
     """
     Upload a file to the provided path
     """
-    p = Path(settings.UPLOAD_DIR) / path
+    p = Path(path)
     p.parent.mkdir(
         parents=True,
         exist_ok=True,

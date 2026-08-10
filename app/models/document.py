@@ -1,6 +1,9 @@
+from pathlib import Path
+
 from sqlalchemy import BigInteger, String
 from sqlmodel import Field, Relationship, SQLModel
 
+from app.config import settings
 from app.models.base import Base
 
 
@@ -38,6 +41,10 @@ class DocumentRead(Base, DocumentCreateEdit):
 
 class Document(DocumentRead, table=True):
     category: DocumentCategory = Relationship()
+
+    @property
+    def absolute_path(self) -> str:
+        return str(Path(settings.UPLOAD_DIR) / "documents" / str(self.id))
 
 
 class DocumentPublic(DocumentRead):
