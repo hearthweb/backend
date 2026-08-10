@@ -57,7 +57,7 @@ USER app
 VOLUME /data
 
 # Use the special /internal/health-check route for confirming health
-HEALTHCHECK --timeout=1s \
+HEALTHCHECK --interval=1m --start-interval=2s --start-period=1m --timeout=1s \
   CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/internal/health-check')"
 
 # Specify the command to run
