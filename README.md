@@ -5,14 +5,20 @@
 
 This repository contains the backend for Hearth. It communicates with the database, handles authentication, serialization, job management, etc.
 
-### Running the Application
+If you are looking to run Hearth in production, please consult the [app](https://github.com/hearthweb/app) repository.
 
-The officially supported way of running the backend is via Docker container:
+### Local Development
+
+The backend uses the [uv](https://docs.astral.sh/uv/) package manager. Once installed, setting up application dependencies is as simple as:
 
 ```
-docker run \
-    --name backend \
-    -p 8000:8000 \
-    --env SECRET_KEY=Password1234 \
-    ghcr.io/hearthweb/backend:latest
+uv sync
 ```
+
+Starting the application in dev mode can be done with:
+
+```
+uv run fastapi dev
+```
+
+This will use a local SQLite database and `./upload` for storage.
