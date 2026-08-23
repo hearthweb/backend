@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, Form, Response, UploadFile, status
@@ -70,7 +71,7 @@ def documents_create(
     name: Annotated[str, Form()],
     category_id: Annotated[int, Form()],
     db: Annotated[Session, Depends(get_db)],
-    upload_path: Annotated[str, Depends(get_upload_path)],
+    upload_path: Annotated[Path, Depends(get_upload_path)],
 ) -> DocumentPublic:
     document = Document.model_validate(
         {
@@ -103,6 +104,7 @@ def documents_create(
 def documents_by_id_download(
     id: int,
     db: Annotated[Session, Depends(get_db)],
+    upload_path: Annotated[Path, Depends(get_upload_path)],
     response: Response,
 ) -> None:
     document = get_or_404(
@@ -110,7 +112,9 @@ def documents_by_id_download(
             select(Document).where(Document.id == id),
         ).one_or_none(),
     )
-    response.headers["X-Accel-Redirect"] = document.absolute_path
+    response.headers["X-Accel-Redirect"] = str(
+        upload_path / document.relative_path,
+    )
     response.headers["Content-Type"] = document.filetype
     response.headers["Content-Disposition"] = (
         f'attachment; filename="{document.filename}"'
@@ -131,7 +135,7 @@ def documents_by_id_download(
 def documents_by_id_delete(
     id: int,
     db: Annotated[Session, Depends(get_db)],
-    upload_path: Annotated[str, Depends(get_upload_path)],
+    upload_path: Annotated[Path, Depends(get_upload_path)],
 ) -> None:
     document = get_or_404(
         db.exec(
