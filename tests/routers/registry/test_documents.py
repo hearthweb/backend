@@ -11,10 +11,10 @@ from app.models.registry.document import (
 )
 from app.models.user import User
 from tests.constants import (
-    DOCUMENT_CONTENT,
-    DOCUMENT_FILENAME,
-    DOCUMENT_FILETYPE,
-    DOCUMENT_NAME,
+    REGISTRY_DOCUMENT_CONTENT,
+    REGISTRY_DOCUMENT_FILENAME,
+    REGISTRY_DOCUMENT_FILETYPE,
+    REGISTRY_DOCUMENT_NAME,
 )
 from tests.utils import compare_sorted, dump
 
@@ -45,14 +45,14 @@ def test_registry_documents_create(
     response = client.post(
         "/registry/documents",
         data={
-            "name": DOCUMENT_NAME,
+            "name": REGISTRY_DOCUMENT_NAME,
             "category_id": category.id,
         },
         files={
             "file": (
-                DOCUMENT_FILENAME,
-                DOCUMENT_CONTENT,
-                DOCUMENT_FILETYPE,
+                REGISTRY_DOCUMENT_FILENAME,
+                REGISTRY_DOCUMENT_CONTENT,
+                REGISTRY_DOCUMENT_FILETYPE,
             ),
         },
     )
@@ -61,7 +61,7 @@ def test_registry_documents_create(
     document = db.get(Document, json["id"])
     assert json == dump(DocumentPublic, document)
     with open(Path(tmp_path) / document.relative_path, "r") as f:
-        assert f.read() == DOCUMENT_CONTENT
+        assert f.read() == REGISTRY_DOCUMENT_CONTENT
 
 
 def test_registry_documents_by_id_download(

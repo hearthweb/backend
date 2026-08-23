@@ -99,7 +99,7 @@ def logged_in_user_fixture(
 def registry_category(
     db: Session,
 ):
-    category = Category(name=DOCUMENT_CATEGORY_NAME)
+    category = Category(name=REGISTRY_CATEGORY_NAME)
     db.add(category)
     db.commit()
     return category
@@ -112,18 +112,18 @@ def registry_document(
     tmp_path: str,
 ):
     document = Document(
-        name=DOCUMENT_NAME,
+        name=REGISTRY_DOCUMENT_NAME,
         category_id=category.id,
-        filename=DOCUMENT_FILENAME,
-        filesize=len(DOCUMENT_CONTENT),
-        filetype=DOCUMENT_FILETYPE,
+        filename=REGISTRY_DOCUMENT_FILENAME,
+        filesize=len(REGISTRY_DOCUMENT_CONTENT),
+        filetype=REGISTRY_DOCUMENT_FILETYPE,
     )
     db.add(document)
     db.flush()
     p = Path(tmp_path) / document.relative_path
     p.parent.mkdir(parents=True, exist_ok=True)
     with open(p, "w") as f:
-        f.write(DOCUMENT_CONTENT)
+        f.write(REGISTRY_DOCUMENT_CONTENT)
     db.commit()
     return document
 
