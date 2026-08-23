@@ -1,9 +1,9 @@
 from sqlalchemy import String
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Session, SQLModel, select
 
 
 class TagWrite(SQLModel):
-    name: str = Field(sa_type=String(40))
+    name: str = Field(sa_type=String(40), index=True)
     color: str = Field(default="000000", sa_type=String(6))
 
 
@@ -12,4 +12,17 @@ class TagRead(TagWrite):
 
 
 class Tag(TagRead, table=True):
-    pass
+    """
+    Semantic information about a line
+    """
+
+    @staticmethod
+    def get_or_create(db: Session, name: str) -> Tag:
+        tag = db.exec(
+            select(Tag).where(Tag.name == name),
+        ).first()
+        if tag is None:
+            tag = Tag(name=name)
+            db.add(Tag)
+            db.flush()
+        return tag
