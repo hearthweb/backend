@@ -22,3 +22,11 @@ uv run fastapi dev
 ```
 
 This will use a local SQLite database and `./upload` for storage.
+
+### Testing
+
+To run the test suite for the backend, use the following command:
+
+```
+uv run pytest
+```
