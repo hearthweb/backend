@@ -7,7 +7,7 @@ from sqlmodel import Field, Relationship, SQLModel
 from app.models.finance.line import (
     Line,
     LineCreate,
-    LineRead,
+    LinePublic,
 )
 from app.types import Currency, TZDateTime
 
@@ -19,7 +19,8 @@ class TransactionWrite(SQLModel):
     amount: Decimal = Field(sa_type=Currency())
 
 
-class TransactionCreate(TransactionWrite):
+class TransactionCreate(SQLModel):
+    transaction: TransactionWrite
     lines: list[LineCreate] = []
 
 
@@ -32,4 +33,4 @@ class Transaction(TransactionRead, table=True):
 
 
 class TransactionPublic(TransactionRead):
-    lines: list[LineRead]
+    lines: list[LinePublic]
