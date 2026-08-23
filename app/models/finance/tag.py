@@ -12,9 +12,7 @@ class TagRead(TagWrite):
 
 
 class Tag(TagRead, table=True):
-    """
-    Semantic information about a line
-    """
+    __tablename__ = "finance_tag"
 
     @staticmethod
     def get_or_create(db: Session, name: str) -> Tag:

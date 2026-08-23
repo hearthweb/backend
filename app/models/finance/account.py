@@ -18,4 +18,4 @@ class AccountRead(AccountWrite):
 
 
 class Account(AccountRead, table=True):
-    pass
+    __tablename__ = "finance_account"

@@ -12,12 +12,12 @@ from app.types import Currency
 
 class LineBase(SQLModel):
     summary: str = Field(sa_type=String(200))
-    account_id: int = Field(foreign_key="account.id")
+    account_id: int = Field(foreign_key="finance_account.id")
     amount: Decimal = Field(Decimal(0), sa_type=Currency())
 
 
 class LineWrite(LineBase):
-    transaction_id: int = Field(foreign_key="transaction.id")
+    transaction_id: int = Field(foreign_key="finance_transaction.id")
 
 
 class LineCreate(LineBase):
@@ -29,6 +29,8 @@ class LineRead(LineWrite):
 
 
 class Line(LineRead, table=True):
+    __tablename__ = "finance_line"
+
     account: Account = Relationship()
     tags: list[Tag] = Relationship(link_model=TagLineLink)
 

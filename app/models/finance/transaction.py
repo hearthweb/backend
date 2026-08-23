@@ -29,6 +29,8 @@ class TransactionRead(TransactionWrite):
 
 
 class Transaction(TransactionRead, table=True):
+    __tablename__ = "finance_transaction"
+
     lines: list[Line] = Relationship()
 
 
