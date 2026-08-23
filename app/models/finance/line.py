@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from sqlalchemy import String, event
 from sqlalchemy.orm.attributes import get_history
+from sqlalchemy.orm.mapper import Mapper
 from sqlmodel import Field, Relationship, Session, SQLModel, update
 
 from app.models.finance.account import Account, AccountRead
@@ -36,6 +37,12 @@ class Line(LineRead, table=True):
 class LinePublic(LineRead):
     account: AccountRead
     tags: list[TagRead]
+
+
+@event.listens_for(Line, "mapper_configured")
+def _set_active_history(mapper: Mapper[Line], cls: type[Line]):
+    cls.account_id.impl.active_history = True
+    cls.amount.impl.active_history = True
 
 
 @event.listens_for(Session, "before_flush")
