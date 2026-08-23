@@ -1,5 +1,6 @@
 from collections.abc import Generator
 from datetime import UTC, datetime
+from pathlib import Path
 
 import pytest
 from fastapi import status
@@ -8,20 +9,14 @@ from sqlmodel import Session, SQLModel, StaticPool, create_engine
 
 from app.database import get_db
 from app.main import app
+from app.models.document.category import Category
+from app.models.document.document import Document
 from app.models.finance.account import Account
 from app.models.finance.line import Line
 from app.models.finance.transaction import Transaction
 from app.models.user import User
-from tests.constants import (
-    ADMIN_EMAIL,
-    ADMIN_PASSWORD,
-    FINANCE_ACCOUNT_NAME,
-    FINANCE_LINE_AMOUNT,
-    FINANCE_LINE_SUMMARY,
-    FINANCE_TRANSACTION_SUMMARY,
-    USER_EMAIL,
-    USER_PASSWORD,
-)
+from app.upload import get_upload_path
+from tests.constants import *
 
 
 @pytest.fixture(name="db")
@@ -37,11 +32,18 @@ def db_fixture() -> Generator[Session]:
 
 
 @pytest.fixture(name="client", autouse=True)
-def client_fixture(db: Session) -> Generator[TestClient]:
+def client_fixture(
+    db: Session,
+    tmp_path: str,
+) -> Generator[TestClient]:
     def override_get_db() -> Generator[Session]:
         yield db
 
+    def override_get_upload_path() -> Path:
+        return Path(tmp_path)
+
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_upload_path] = override_get_upload_path
     yield TestClient(app)
     app.dependency_overrides.clear()
 
@@ -91,6 +93,39 @@ def logged_in_user_fixture(
 ) -> User:
     login_user(client, USER_EMAIL, USER_PASSWORD)
     return user
+
+
+@pytest.fixture(name="category")
+def category(
+    db: Session,
+):
+    category = Category(name=DOCUMENT_CATEGORY_NAME)
+    db.add(category)
+    db.commit()
+    return category
+
+
+@pytest.fixture(name="document")
+def document(
+    db: Session,
+    category: Category,
+    tmp_path: str,
+):
+    document = Document(
+        name=DOCUMENT_NAME,
+        category_id=category.id,
+        filename=DOCUMENT_FILENAME,
+        filesize=len(DOCUMENT_CONTENT),
+        filetype=DOCUMENT_FILETYPE,
+    )
+    db.add(document)
+    db.flush()
+    p = Path(tmp_path) / document.relative_path
+    p.parent.mkdir(parents=True, exist_ok=True)
+    with open(p, "w") as f:
+        f.write(DOCUMENT_CONTENT)
+    db.commit()
+    return document
 
 
 @pytest.fixture(name="account")
