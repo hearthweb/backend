@@ -9,6 +9,8 @@ from app.dependencies.auth import (
     get_current_admin,
     get_current_admin_responses,
 )
+from app.models.finance.line import Line
+from app.models.finance.tag import Tag
 from app.models.finance.transaction import (
     Transaction,
     TransactionCreate,
@@ -48,8 +50,18 @@ def finance_transactions_create(
     body: TransactionCreate,
     db: Annotated[Session, Depends(get_db)],
 ) -> TransactionRead:
-    transaction = Transaction.model_validate(body)
+    transaction = Transaction.model_validate(body.transaction)
     db.add(transaction)
+    db.flush()
+    for l in body.lines:
+        line = Line.model_validate(
+            l,
+            update={
+                "tags": [Tag.get_or_create(tag) for tag in l.tags],
+                "transaction_id": transaction.id,
+            },
+        )
+        db.add(line)
     db.commit()
     db.refresh(transaction)
     return transaction
@@ -66,13 +78,17 @@ def finance_transactions_create(
     operation_id="financeTransactionsById",
 )
 def finance_transactions_by_id(
+    id: int,
     db: Annotated[Session, Depends(get_db)],
 ) -> TransactionPublic:
     return get_or_404(
         db.exec(
             select(Transaction)
             .where(Transaction.id == id)
-            .options(selectinload(Transaction.lines)),
+            .options(
+                selectinload(Transaction.lines).selectinload(Line.account),
+                selectinload(Transaction.lines).selectinload(Line.tags),
+            ),
         ).one_or_none(),
     )
 
@@ -94,7 +110,7 @@ def finance_transactions_by_id_delete(
 ) -> None:
     transaction = get_or_404(
         db.exec(
-            select(Transaction).where(Transaction.id == id),
+            select(Transaction).where(Transaction.id == id).with_for_update(),
         ).one_or_none(),
     )
     db.delete(transaction)
