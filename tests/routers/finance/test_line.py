@@ -1,3 +1,4 @@
+from datetime import UTC, datetime
 from decimal import Decimal
 
 from sqlmodel import Session
@@ -78,7 +79,10 @@ def test_finance_line_change_transaction_id(
     line: Line,
     db: Session,
 ):
-    transaction2 = Transaction(summary=FINANCE_TRANSACTION_SUMMARY)
+    transaction2 = Transaction(
+        date=datetime.now(tz=UTC),
+        summary=FINANCE_TRANSACTION_SUMMARY,
+    )
     db.add(transaction2)
     db.commit()
     line.transaction_id = transaction2.id
