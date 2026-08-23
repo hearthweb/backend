@@ -1,6 +1,7 @@
 from .auth import LoginSession  # noqa: F401
 from .credential import Credential  # noqa: F401
-from .document import Document, DocumentCategory  # noqa: F401
+from .document.category import Category  # noqa: F401
+from .document.document import Document  # noqa: F401
 from .finance.account import Account  # noqa: F401
 from .finance.line import Line  # noqa: F401
 from .finance.tag import Tag  # noqa: F401

@@ -9,9 +9,9 @@ from app.dependencies.auth import (
     get_current_admin,
     get_current_admin_responses,
 )
-from app.models.document import (
+from app.models.document.category import Category
+from app.models.document.document import (
     Document,
-    DocumentCategory,
     DocumentPublic,
 )
 from app.utils import get_or_404, get_or_404_responses, upload_file
@@ -33,8 +33,8 @@ router = APIRouter(
 )
 def documents_categories(
     db: Annotated[Session, Depends(get_db)],
-) -> list[DocumentCategory]:
-    return db.exec(select(DocumentCategory))
+) -> list[Category]:
+    return db.exec(select(Category))
 
 
 @router.get(
