@@ -1,7 +1,10 @@
+from decimal import Decimal
+
 ADMIN_EMAIL = "admin@example.com"
 ADMIN_PASSWORD = "admin"
 
 FINANCE_ACCOUNT_NAME = "Test Account"
+FINANCE_LINE_AMOUNT = Decimal(25)
 FINANCE_LINE_SUMMARY = "Summary of Line"
 FINANCE_TRANSACTION_SUMMARY = "Summary of Transaction"
 

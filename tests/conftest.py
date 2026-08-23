@@ -16,6 +16,7 @@ from tests.constants import (
     ADMIN_EMAIL,
     ADMIN_PASSWORD,
     FINANCE_ACCOUNT_NAME,
+    FINANCE_LINE_AMOUNT,
     FINANCE_LINE_SUMMARY,
     FINANCE_TRANSACTION_SUMMARY,
     USER_EMAIL,
@@ -124,6 +125,7 @@ def finance_line(
     line = Line(
         summary=FINANCE_LINE_SUMMARY,
         account_id=account.id,
+        amount=FINANCE_LINE_AMOUNT,
         transaction_id=transaction.id,
     )
     db.add(line)
