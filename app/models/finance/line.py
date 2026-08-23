@@ -9,19 +9,22 @@ from app.models.finance.taglinelink import TagLineLink
 from app.types import Currency
 
 
-class LineWrite(SQLModel):
+class LineBase(SQLModel):
     summary: str = Field(sa_type=String(200))
     account_id: int = Field(foreign_key="account.id")
     amount: Decimal = Field(sa_type=Currency())
 
 
-class LineCreate(LineWrite):
+class LineWrite(LineBase):
+    transaction_id: int = Field(foreign_key="transaction.id")
+
+
+class LineCreate(LineBase):
     tags: list[str] = []
 
 
 class LineRead(LineWrite):
     id: int | None = Field(default=None, primary_key=True)
-    transaction_id: int = Field(foreign_key="transaction.id")
 
 
 class Line(LineRead, table=True):
