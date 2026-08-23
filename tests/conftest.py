@@ -1,5 +1,4 @@
 from collections.abc import Generator
-from datetime import UTC, datetime
 
 import pytest
 from fastapi import status
@@ -107,10 +106,7 @@ def finance_account(
 def finance_transaction(
     db: Session,
 ) -> Transaction:
-    transaction = Transaction(
-        date=datetime.now(tz=UTC),
-        summary=FINANCE_TRANSACTION_SUMMARY,
-    )
+    transaction = Transaction(summary=FINANCE_TRANSACTION_SUMMARY)
     db.add(transaction)
     db.commit()
     return transaction

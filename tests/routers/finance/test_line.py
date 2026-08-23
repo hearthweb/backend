@@ -9,6 +9,7 @@ from tests.constants import (
     FINANCE_ACCOUNT_NAME,
     FINANCE_LINE_AMOUNT,
     FINANCE_LINE_SUMMARY,
+    FINANCE_TRANSACTION_SUMMARY,
 )
 
 
@@ -17,17 +18,17 @@ def test_finance_line_create(
     transaction: Transaction,
     db: Session,
 ):
-    amount = FINANCE_LINE_AMOUNT
     line = Line(
         summary=FINANCE_LINE_SUMMARY,
         account_id=account.id,
-        amount=amount,
+        amount=FINANCE_LINE_AMOUNT,
         transaction_id=transaction.id,
     )
     db.add(line)
     db.commit()
     db.refresh(account)
-    assert account.balance == amount
+    assert account.balance == FINANCE_LINE_AMOUNT
+    assert transaction.amount == FINANCE_LINE_AMOUNT
 
 
 def test_finance_line_delete(
@@ -40,6 +41,7 @@ def test_finance_line_delete(
     db.commit()
     db.refresh(account)
     assert account.balance == Decimal(0)
+    assert transaction.amount == Decimal(0)
 
 
 def test_finance_line_change_account_id(
@@ -59,6 +61,7 @@ def test_finance_line_change_account_id(
 
 def test_finance_line_change_amount(
     account: Account,
+    transaction: Transaction,
     line: Line,
     db: Session,
 ):
@@ -67,3 +70,19 @@ def test_finance_line_change_amount(
     db.add(line)
     db.commit()
     assert account.balance == new_amount
+    assert transaction.amount == new_amount
+
+
+def test_finance_line_change_transaction_id(
+    transaction: Transaction,
+    line: Line,
+    db: Session,
+):
+    transaction2 = Transaction(summary=FINANCE_TRANSACTION_SUMMARY)
+    db.add(transaction2)
+    db.commit()
+    line.transaction_id = transaction2.id
+    db.add(line)
+    db.commit()
+    assert transaction.amount == Decimal(0)
+    assert transaction2.amount == FINANCE_LINE_AMOUNT
