@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from datetime import UTC, datetime
 
 import pytest
 from fastapi import status
@@ -7,10 +8,16 @@ from sqlmodel import Session, SQLModel, StaticPool, create_engine
 
 from app.database import get_db
 from app.main import app
+from app.models.finance.account import Account
+from app.models.finance.line import Line
+from app.models.finance.transaction import Transaction
 from app.models.user import User
 from tests.constants import (
     ADMIN_EMAIL,
     ADMIN_PASSWORD,
+    FINANCE_ACCOUNT_NAME,
+    FINANCE_LINE_SUMMARY,
+    FINANCE_TRANSACTION_SUMMARY,
     USER_EMAIL,
     USER_PASSWORD,
 )
@@ -81,6 +88,44 @@ def logged_in_user_fixture(
     client: TestClient,
     user: User,
 ) -> User:
-
     login_user(client, USER_EMAIL, USER_PASSWORD)
     return user
+
+
+@pytest.fixture(name="account")
+def finance_account(
+    db: Session,
+) -> Account:
+    account = Account(name=FINANCE_ACCOUNT_NAME)
+    db.add(account)
+    db.commit()
+    return account
+
+
+@pytest.fixture(name="transaction")
+def finance_transaction(
+    db: Session,
+) -> Transaction:
+    transaction = Transaction(
+        date=datetime.now(tz=UTC),
+        summary=FINANCE_TRANSACTION_SUMMARY,
+    )
+    db.add(transaction)
+    db.commit()
+    return transaction
+
+
+@pytest.fixture(name="line")
+def finance_line(
+    db: Session,
+    account: Account,
+    transaction: Transaction,
+):
+    line = Line(
+        summary=FINANCE_LINE_SUMMARY,
+        account_id=account.id,
+        transaction_id=transaction.id,
+    )
+    db.add(line)
+    db.commit()
+    return line
