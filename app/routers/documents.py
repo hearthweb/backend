@@ -15,7 +15,8 @@ from app.models.document.document import (
     Document,
     DocumentPublic,
 )
-from app.utils import get_or_404, get_or_404_responses, upload_file
+from app.upload import get_upload_path, upload_file
+from app.utils import get_or_404, get_or_404_responses
 
 router = APIRouter(
     prefix="/documents",
@@ -69,6 +70,7 @@ def documents_create(
     name: Annotated[str, Form()],
     category_id: Annotated[int, Form()],
     db: Annotated[Session, Depends(get_db)],
+    upload_path: Annotated[str, Depends(get_upload_path)],
 ) -> DocumentPublic:
     document = Document.model_validate(
         {
@@ -81,7 +83,7 @@ def documents_create(
     )
     db.add(document)
     db.flush()
-    upload_file(file, document.absolute_path)
+    upload_file(file, upload_path / document.relative_path)
     db.commit()
     db.refresh(document)
     return document
@@ -129,12 +131,13 @@ def documents_by_id_download(
 def documents_by_id_delete(
     id: int,
     db: Annotated[Session, Depends(get_db)],
+    upload_path: Annotated[str, Depends(get_upload_path)],
 ) -> None:
     document = get_or_404(
         db.exec(
             select(Document).where(Document.id == id).with_for_update(),
         ).one_or_none(),
     )
-    os.unlink(document.absolute_path)
+    os.unlink(upload_path / document.relative_path)
     db.delete(document)
     db.commit()

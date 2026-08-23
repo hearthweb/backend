@@ -4,7 +4,6 @@ from pathlib import Path
 from sqlalchemy import BigInteger, String
 from sqlmodel import Field, Relationship, SQLModel, func
 
-from app.config import settings
 from app.models.document.category import Category, CategoryRead
 from app.types import TZDateTime
 
@@ -38,8 +37,8 @@ class Document(DocumentRead, table=True):
     category: Category = Relationship()
 
     @property
-    def absolute_path(self) -> str:
-        return str(Path(settings.UPLOAD_DIR) / "documents" / str(self.id))
+    def relative_path(self) -> str:
+        return str(Path("documents") / str(self.id))
 
 
 class DocumentPublic(DocumentRead):
