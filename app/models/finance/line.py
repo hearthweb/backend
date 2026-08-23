@@ -84,5 +84,5 @@ def _update_accounts_when_lines_change(session: Session, *args, **kwargs) -> Non
         session.exec(
             update(Account)
             .where(Account.id == id)
-            .values(amount=Account.balance + delta)
+            .values(balance=Account.balance + delta)
         )
