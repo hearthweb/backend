@@ -1,3 +1,4 @@
+import os
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, Form, Response, UploadFile, status
@@ -112,3 +113,28 @@ def documents_by_id_download(
     response.headers["Content-Disposition"] = (
         f'attachment; filename="{document.filename}"'
     )
+
+
+@router.delete(
+    "/{document_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete a specific document",
+    dependencies=[Depends(get_current_admin)],
+    responses={
+        **get_current_admin_responses,
+        **get_or_404_responses,
+    },
+    operation_id="documentsByIdDelete",
+)
+def documents_by_id_delete(
+    id: int,
+    db: Annotated[Session, Depends(get_db)],
+) -> None:
+    document = get_or_404(
+        db.exec(
+            select(Document).where(Document.id == id).with_for_update(),
+        ).one_or_none(),
+    )
+    os.unlink(document.absolute_path)
+    db.delete(document)
+    db.commit()
