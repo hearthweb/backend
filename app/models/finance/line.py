@@ -78,7 +78,7 @@ def _update_accounts_when_lines_change(session: Session, *args, **kwargs) -> Non
             continue
         hist_amount = get_history(obj, "amount")
         hist_id = get_history(obj, "account_id")
-        prev_amount = hist_amount[0] if hist_amount.deleted else obj.amount
+        prev_amount = hist_amount.deleted[0] if hist_amount.deleted else obj.amount
         prev_id = hist_id.deleted[0] if hist_id.deleted else obj.account_id
         if prev_id == obj.account_id:
             add(obj.account_id, obj.amount - prev_amount)
