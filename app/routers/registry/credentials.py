@@ -1,7 +1,6 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
-from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
 from app.database import get_db
@@ -9,18 +8,15 @@ from app.dependencies.auth import (
     get_current_admin,
     get_current_admin_responses,
 )
-from app.models.credential import (
+from app.models.registry.credential import (
     Credential,
-    CredentialCreateEdit,
-    CredentialPublic,
+    CredentialRead,
+    CredentialWrite,
 )
 from app.models.user import User
 from app.utils import get_or_404, get_or_404_responses
 
-router = APIRouter(
-    prefix="/credentials",
-    tags=["Credentials"],
-)
+router = APIRouter(prefix="/credentials")
 
 
 @router.get(
@@ -30,14 +26,12 @@ router = APIRouter(
     responses={
         **get_current_admin_responses,
     },
-    operation_id="credentials",
+    operation_id="registryCredentials",
 )
-def credentials(
+def registry_credentials(
     db: Annotated[Session, Depends(get_db)],
-) -> list[CredentialPublic]:
-    return db.exec(
-        select(Credential).options(selectinload(Credential.user)),
-    )
+) -> list[CredentialRead]:
+    return db.exec(select(Credential))
 
 
 @router.post(
@@ -46,19 +40,14 @@ def credentials(
     responses={
         **get_current_admin_responses,
     },
-    operation_id="credentialsCreate",
+    operation_id="registryCredentialsCreate",
 )
-def credentials_create(
-    body: CredentialCreateEdit,
+def registry_credentials_create(
+    body: CredentialWrite,
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[User, Depends(get_current_admin)],
-) -> CredentialPublic:
-    credential = Credential.model_validate(
-        body,
-        update={
-            "user_id": user.id,
-        },
-    )
+) -> CredentialRead:
+    credential = Credential.model_validate(body)
     db.add(credential)
     db.commit()
     db.refresh(credential)
@@ -66,7 +55,7 @@ def credentials_create(
 
 
 @router.delete(
-    "/{credential_id}",
+    "/{id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete a specific credential",
     dependencies=[Depends(get_current_admin)],
@@ -74,15 +63,15 @@ def credentials_create(
         **get_current_admin_responses,
         **get_or_404_responses,
     },
-    operation_id="credentialsByIdDelete",
+    operation_id="registryCredentialsByIdDelete",
 )
-def credentials_by_id_delete(
-    credential_id: int,
+def registry_credentials_by_id_delete(
+    id: int,
     db: Annotated[Session, Depends(get_db)],
 ) -> None:
     credential = get_or_404(
         db.exec(
-            select(Credential).where(Credential.id == credential_id).with_for_update(),
+            select(Credential).where(Credential.id == id).with_for_update(),
         ).one_or_none(),
     )
     db.delete(credential)
