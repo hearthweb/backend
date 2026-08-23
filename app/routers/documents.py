@@ -88,7 +88,7 @@ def documents_create(
 
 
 @router.get(
-    "/{document_id}/download",
+    "/{id}/download",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Download a document",
     dependencies=[Depends(get_current_admin)],
@@ -99,13 +99,13 @@ def documents_create(
     operation_id="documentsByIdDownload",
 )
 def documents_by_id_download(
-    document_id: int,
+    id: int,
     db: Annotated[Session, Depends(get_db)],
     response: Response,
 ) -> None:
     document = get_or_404(
         db.exec(
-            select(Document).where(Document.id == document_id),
+            select(Document).where(Document.id == id),
         ).one_or_none(),
     )
     response.headers["X-Accel-Redirect"] = document.absolute_path
@@ -116,7 +116,7 @@ def documents_by_id_download(
 
 
 @router.delete(
-    "/{document_id}",
+    "/{id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete a specific document",
     dependencies=[Depends(get_current_admin)],
