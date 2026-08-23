@@ -13,7 +13,7 @@ from app.types import Currency
 class LineBase(SQLModel):
     summary: str = Field(sa_type=String(200))
     account_id: int = Field(foreign_key="account.id")
-    amount: Decimal = Field(sa_type=Currency())
+    amount: Decimal = Field(Decimal(0), sa_type=Currency())
 
 
 class LineWrite(LineBase):
