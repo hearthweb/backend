@@ -13,6 +13,7 @@ from app.models.finance.account import Account
 from app.models.finance.line import Line
 from app.models.finance.transaction import Transaction
 from app.models.registry.category import Category
+from app.models.registry.credential import Credential
 from app.models.registry.document import Document
 from app.models.user import User
 from app.upload import get_upload_path
@@ -103,6 +104,18 @@ def registry_category(
     db.add(category)
     db.commit()
     return category
+
+
+@pytest.fixture(name="credential")
+def registry_credential(db: Session):
+    credential = Credential(
+        service=REGISTRY_CREDENTIAL_SERVICE,
+        username_or_email=REGISTRY_CREDENTIAL_USERNAME,
+        password=REGISTRY_CREDENTIAL_PASSWORD,
+    )
+    db.add(credential)
+    db.commit()
+    return credential
 
 
 @pytest.fixture(name="document")
