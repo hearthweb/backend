@@ -8,8 +8,8 @@ from app.types import Currency
 
 class AccountWrite(SQLModel):
     name: str = Field(sa_type=String(100))
-    description: str
-    balance: Decimal = Field(default=Decimal(), sa_type=Currency())
+    description: str = ""
+    balance: Decimal = Field(default=Decimal(0), sa_type=Currency())
     active: bool = Field(default=True)
 
 
