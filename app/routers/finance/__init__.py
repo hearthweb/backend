@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.routers.finance import accounts, transactions
+from . import accounts, transactions
 
 router = APIRouter(
     prefix="/finance",

@@ -11,4 +11,4 @@ class CategoryRead(CategoryWrite):
 
 
 class Category(CategoryRead, table=True):
-    __tablename__ = "document_category"
+    __tablename__ = "registry_category"

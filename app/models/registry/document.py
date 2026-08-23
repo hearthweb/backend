@@ -4,14 +4,14 @@ from pathlib import Path
 from sqlalchemy import BigInteger, String
 from sqlmodel import Field, Relationship, SQLModel, func
 
-from app.models.document.category import Category, CategoryRead
+from app.models.registry.category import Category, CategoryRead
 from app.types import TZDateTime
 
 
 class DocumentWrite(SQLModel):
     name: str = Field(sa_type=String(255))
     category_id: int = Field(
-        foreign_key="document_category.id",
+        foreign_key="registry_category.id",
         index=True,
     )
 
@@ -32,7 +32,7 @@ class DocumentRead(DocumentWrite):
 
 
 class Document(DocumentRead, table=True):
-    __tablename__ = "document_document"
+    __tablename__ = "registry_document"
 
     category: Category = Relationship()
 

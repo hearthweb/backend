@@ -11,33 +11,14 @@ from app.dependencies.auth import (
     get_current_admin,
     get_current_admin_responses,
 )
-from app.models.document.category import Category
-from app.models.document.document import (
+from app.models.registry.document import (
     Document,
     DocumentPublic,
 )
 from app.upload import get_upload_path, upload_file
 from app.utils import get_or_404, get_or_404_responses
 
-router = APIRouter(
-    prefix="/documents",
-    tags=["Documents"],
-)
-
-
-@router.get(
-    "/categories",
-    summary="Get a list of all document categories",
-    dependencies=[Depends(get_current_admin)],
-    responses={
-        **get_current_admin_responses,
-    },
-    operation_id="documentsCategories",
-)
-def documents_categories(
-    db: Annotated[Session, Depends(get_db)],
-) -> list[Category]:
-    return db.exec(select(Category))
+router = APIRouter(prefix="/documents")
 
 
 @router.get(
@@ -47,9 +28,9 @@ def documents_categories(
     responses={
         **get_current_admin_responses,
     },
-    operation_id="documents",
+    operation_id="registryDocuments",
 )
-def documents(
+def registry_documents(
     db: Annotated[Session, Depends(get_db)],
 ) -> list[DocumentPublic]:
     return db.exec(
@@ -64,9 +45,9 @@ def documents(
     responses={
         **get_current_admin_responses,
     },
-    operation_id="documentsCreate",
+    operation_id="registryDocumentsCreate",
 )
-def documents_create(
+def registry_documents_create(
     file: Annotated[UploadFile, File()],
     name: Annotated[str, Form()],
     category_id: Annotated[int, Form()],
@@ -99,9 +80,9 @@ def documents_create(
         **get_current_admin_responses,
         **get_or_404_responses,
     },
-    operation_id="documentsByIdDownload",
+    operation_id="registryDocumentsByIdDownload",
 )
-def documents_by_id_download(
+def registry_documents_by_id_download(
     id: int,
     db: Annotated[Session, Depends(get_db)],
     upload_path: Annotated[Path, Depends(get_upload_path)],
@@ -130,9 +111,9 @@ def documents_by_id_download(
         **get_current_admin_responses,
         **get_or_404_responses,
     },
-    operation_id="documentsByIdDelete",
+    operation_id="registryDocumentsByIdDelete",
 )
-def documents_by_id_delete(
+def registry_documents_by_id_delete(
     id: int,
     db: Annotated[Session, Depends(get_db)],
     upload_path: Annotated[Path, Depends(get_upload_path)],

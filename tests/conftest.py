@@ -9,11 +9,11 @@ from sqlmodel import Session, SQLModel, StaticPool, create_engine
 
 from app.database import get_db
 from app.main import app
-from app.models.document.category import Category
-from app.models.document.document import Document
 from app.models.finance.account import Account
 from app.models.finance.line import Line
 from app.models.finance.transaction import Transaction
+from app.models.registry.category import Category
+from app.models.registry.document import Document
 from app.models.user import User
 from app.upload import get_upload_path
 from tests.constants import *
@@ -96,7 +96,7 @@ def logged_in_user_fixture(
 
 
 @pytest.fixture(name="category")
-def category(
+def registry_category(
     db: Session,
 ):
     category = Category(name=DOCUMENT_CATEGORY_NAME)
@@ -106,7 +106,7 @@ def category(
 
 
 @pytest.fixture(name="document")
-def document(
+def registry_document(
     db: Session,
     category: Category,
     tmp_path: str,
