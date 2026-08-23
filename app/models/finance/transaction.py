@@ -15,8 +15,8 @@ from app.types import Currency, TZDateTime
 class TransactionWrite(SQLModel):
     date: datetime = Field(sa_type=TZDateTime())
     summary: str = Field(sa_type=String(200))
-    description: str
-    amount: Decimal = Field(sa_type=Currency())
+    description: str = ""
+    amount: Decimal = Field(default=Decimal(0), sa_type=Currency())
 
 
 class TransactionCreate(SQLModel):
