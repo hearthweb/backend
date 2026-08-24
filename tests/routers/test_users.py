@@ -3,7 +3,10 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session
 
 from app.models.user import User, UserRead
-from tests.constants import USER_EMAIL, USER_PASSWORD
+from tests import (
+    USER_EMAIL,
+    USER_PASSWORD,
+)
 from tests.utils import compare_sorted, dump
 
 

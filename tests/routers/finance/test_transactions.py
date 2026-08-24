@@ -12,12 +12,13 @@ from app.models.finance.transaction import (
     TransactionRead,
 )
 from app.models.user import User
-from tests.constants import (
-    FINANCE_LINE_AMOUNT,
-    FINANCE_LINE_SUMMARY,
-    FINANCE_TRANSACTION_SUMMARY,
-)
 from tests.utils import compare_sorted, dump
+
+from . import (
+    LINE_AMOUNT,
+    LINE_SUMMARY,
+    TRANSACTION_SUMMARY,
+)
 
 
 def test_finance_transactions(
@@ -47,13 +48,13 @@ def test_finance_transactions_create(
         json={
             "transaction": {
                 "date": datetime.now(tz=UTC).isoformat(),
-                "summary": FINANCE_TRANSACTION_SUMMARY,
+                "summary": TRANSACTION_SUMMARY,
             },
             "lines": [
                 {
-                    "summary": FINANCE_LINE_SUMMARY,
+                    "summary": LINE_SUMMARY,
                     "account_id": account.id,
-                    "amount": str(FINANCE_LINE_AMOUNT),
+                    "amount": str(LINE_AMOUNT),
                 }
             ],
         },

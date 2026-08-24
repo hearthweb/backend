@@ -1,5 +1,4 @@
 from collections.abc import Generator
-from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -9,15 +8,15 @@ from sqlmodel import Session, SQLModel, StaticPool, create_engine
 
 from app.database import get_db
 from app.main import app
-from app.models.finance.account import Account
-from app.models.finance.line import Line
-from app.models.finance.transaction import Transaction
-from app.models.registry.category import Category
-from app.models.registry.credential import Credential
-from app.models.registry.document import Document
 from app.models.user import User
 from app.upload import get_upload_path
-from tests.constants import *
+
+from . import (
+    ADMIN_EMAIL,
+    ADMIN_PASSWORD,
+    USER_EMAIL,
+    USER_PASSWORD,
+)
 
 
 @pytest.fixture(name="db")
@@ -94,88 +93,3 @@ def logged_in_user_fixture(
 ) -> User:
     login_user(client, USER_EMAIL, USER_PASSWORD)
     return user
-
-
-@pytest.fixture(name="category")
-def registry_category(
-    db: Session,
-):
-    category = Category(name=REGISTRY_CATEGORY_NAME)
-    db.add(category)
-    db.commit()
-    return category
-
-
-@pytest.fixture(name="credential")
-def registry_credential(db: Session):
-    credential = Credential(
-        service=REGISTRY_CREDENTIAL_SERVICE,
-        username_or_email=REGISTRY_CREDENTIAL_USERNAME,
-        password=REGISTRY_CREDENTIAL_PASSWORD,
-    )
-    db.add(credential)
-    db.commit()
-    return credential
-
-
-@pytest.fixture(name="document")
-def registry_document(
-    db: Session,
-    category: Category,
-    tmp_path: str,
-):
-    document = Document(
-        name=REGISTRY_DOCUMENT_NAME,
-        category_id=category.id,
-        filename=REGISTRY_DOCUMENT_FILENAME,
-        filesize=len(REGISTRY_DOCUMENT_CONTENT),
-        filetype=REGISTRY_DOCUMENT_FILETYPE,
-    )
-    db.add(document)
-    db.flush()
-    p = Path(tmp_path) / document.relative_path
-    p.parent.mkdir(parents=True, exist_ok=True)
-    with open(p, "w") as f:
-        f.write(REGISTRY_DOCUMENT_CONTENT)
-    db.commit()
-    return document
-
-
-@pytest.fixture(name="account")
-def finance_account(
-    db: Session,
-) -> Account:
-    account = Account(name=FINANCE_ACCOUNT_NAME)
-    db.add(account)
-    db.commit()
-    return account
-
-
-@pytest.fixture(name="transaction")
-def finance_transaction(
-    db: Session,
-) -> Transaction:
-    transaction = Transaction(
-        date=datetime.now(tz=UTC),
-        summary=FINANCE_TRANSACTION_SUMMARY,
-    )
-    db.add(transaction)
-    db.commit()
-    return transaction
-
-
-@pytest.fixture(name="line")
-def finance_line(
-    db: Session,
-    account: Account,
-    transaction: Transaction,
-):
-    line = Line(
-        summary=FINANCE_LINE_SUMMARY,
-        account_id=account.id,
-        amount=FINANCE_LINE_AMOUNT,
-        transaction_id=transaction.id,
-    )
-    db.add(line)
-    db.commit()
-    return line

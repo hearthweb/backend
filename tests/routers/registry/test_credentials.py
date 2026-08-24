@@ -7,12 +7,13 @@ from app.models.registry.credential import (
     CredentialRead,
 )
 from app.models.user import User
-from tests.constants import (
-    REGISTRY_CREDENTIAL_PASSWORD,
-    REGISTRY_CREDENTIAL_SERVICE,
-    REGISTRY_CREDENTIAL_USERNAME,
-)
 from tests.utils import compare_sorted, dump
+
+from . import (
+    CREDENTIAL_PASSWORD,
+    CREDENTIAL_SERVICE,
+    CREDENTIAL_USERNAME,
+)
 
 
 def test_registry_credentials(
@@ -39,9 +40,9 @@ def test_registry_credentials_create(
     response = client.post(
         "/registry/credentials",
         json={
-            "service": REGISTRY_CREDENTIAL_SERVICE,
-            "username_or_email": REGISTRY_CREDENTIAL_USERNAME,
-            "password": REGISTRY_CREDENTIAL_PASSWORD,
+            "service": CREDENTIAL_SERVICE,
+            "username_or_email": CREDENTIAL_USERNAME,
+            "password": CREDENTIAL_PASSWORD,
         },
     )
     assert response.status_code == status.HTTP_200_OK

@@ -5,8 +5,9 @@ from sqlmodel import Session
 from app.models.finance.account import Account, AccountRead
 from app.models.finance.line import Line
 from app.models.user import User
-from tests.constants import FINANCE_ACCOUNT_NAME
 from tests.utils import compare_sorted, dump
+
+from . import ACCOUNT_NAME
 
 
 def test_finance_accounts(
@@ -34,7 +35,7 @@ def test_finance_accounts_create(
     response = client.post(
         "/finance/accounts",
         json={
-            "name": FINANCE_ACCOUNT_NAME,
+            "name": ACCOUNT_NAME,
         },
     )
     assert response.status_code == status.HTTP_200_OK
