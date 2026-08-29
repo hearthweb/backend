@@ -1,19 +1,14 @@
-from datetime import datetime
-
 from sqlmodel import Field, SQLModel
 
-from app.types import TZDateTime
 
-
-class TOTPRead(SQLModel):
-    name: str
-    verified: bool
-    created_at: datetime = Field(sa_type=TZDateTime())
-
-
-class TOTP(TOTPRead, table=True):
+class TOTP(SQLModel, table=True):
     __tablename__ = "auth_totp"
 
-    id: int | None = Field(default=None, primary_key=True)
-    user_id: int = Field(foreign_key="user.id")
+    user_id: int = Field(
+        primary_key=True,
+        foreign_key="user.id",
+        unique=True,
+        index=True,
+    )
     encrypted_secret: bytes
+    verified: bool
