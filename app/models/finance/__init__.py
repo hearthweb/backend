@@ -6,6 +6,8 @@ from sqlmodel import Session, update
 
 from .account import Account
 from .line import Line
+from .tag import Tag
+from .taglinelink import TagLineLink
 from .transaction import Transaction
 
 
@@ -78,3 +80,12 @@ def _update_accounts_when_lines_change(session: Session, *args, **kwargs) -> Non
                 .where(Transaction.id == id)
                 .values(amount=Transaction.amount + delta)
             )
+
+
+__all__ = [
+    "Account",
+    "Line",
+    "Tag",
+    "TagLineLink",
+    "Transaction",
+]

@@ -1,7 +1,7 @@
 from sqlmodel import Field, SQLModel
 
 
-class TOTP(SQLModel, table=True):
+class Totp(SQLModel, table=True):
     __tablename__ = "auth_totp"
 
     user_id: int = Field(
