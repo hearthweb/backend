@@ -54,6 +54,7 @@ def login(
     session = AuthSession(
         user_id=user.id,
         user_agent=user_agent,
+        completed=True,
         expires=expires,
     )
     db.add(session)
