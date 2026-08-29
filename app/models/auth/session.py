@@ -12,6 +12,8 @@ def generate_id() -> str:
 
 
 class Session(SQLModel, table=True):
+    __tablename__ = "auth_session"
+
     id: str = Field(
         default_factory=generate_id,
         primary_key=True,
