@@ -4,24 +4,24 @@ from typing import Annotated
 from fastapi import Cookie, Depends, HTTPException, status
 from sqlmodel import Session, func, select
 
+from app.auth.models.session import Session as AuthSession
+from app.auth.models.user import User
 from app.database import get_db
-from app.models.auth import LoginSession
-from app.models.user import User
 from app.types import create_http_exception_response
 
 
 def get_login_session(
     db: Annotated[Session, Depends(get_db)],
     session_id: Annotated[str | None, Cookie()] = None,
-) -> LoginSession:
+) -> AuthSession:
     """
     Verify that a valid login session was provided and if it is less than 30
     minutes from expiry, extend the session
     """
     session = db.exec(
-        select(LoginSession)
-        .where(LoginSession.id == session_id)
-        .where(LoginSession.expires > func.now())
+        select(AuthSession)
+        .where(AuthSession.id == session_id)
+        .where(AuthSession.expires > func.now())
         .with_for_update(),
     ).one_or_none()
     if session is None:
@@ -44,7 +44,7 @@ get_login_session_responses = {
 
 
 def get_current_user(
-    session: Annotated[LoginSession, Depends(get_login_session)],
+    session: Annotated[AuthSession, Depends(get_login_session)],
 ) -> User:
     """
     Get the currently logged in user; raise an exception if there is none

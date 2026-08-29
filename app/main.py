@@ -3,8 +3,11 @@ from pathlib import Path
 
 from fastapi import FastAPI
 
+from app.auth.routers import router as auth_router
 from app.config import Environment, settings
-from app.routers import auth, finance, internal, registry, users
+from app.finance.routers import router as finance_router
+from app.internal.routers import router as internal_router
+from app.registry.routers import router as registry_router
 
 
 def init():
@@ -28,8 +31,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-app.include_router(auth.router)
-app.include_router(registry.router)
-app.include_router(finance.router)
-app.include_router(internal.router)
-app.include_router(users.router)
+app.include_router(auth_router)
+app.include_router(registry_router)
+app.include_router(finance_router)
+app.include_router(internal_router)

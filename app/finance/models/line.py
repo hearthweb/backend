@@ -1,0 +1,52 @@
+from decimal import Decimal
+
+from sqlalchemy import String, event
+from sqlalchemy.orm.mapper import Mapper
+from sqlmodel import Field, Relationship, SQLModel
+
+from app.finance.models.account import Account, AccountRead
+from app.finance.models.tag import Tag, TagRead
+from app.finance.models.taglinelink import TagLineLink
+from app.types import Currency
+
+
+class LineBase(SQLModel):
+    summary: str = Field(sa_type=String(200))
+    account_id: int = Field(foreign_key="finance_account.id")
+    amount: Decimal = Field(Decimal(0), sa_type=Currency())
+
+
+class LineWrite(LineBase):
+    transaction_id: int = Field(foreign_key="finance_transaction.id")
+
+
+class LineCreate(LineBase):
+    tags: list[str] = []
+
+
+class LineRead(LineWrite):
+    id: int | None = Field(default=None, primary_key=True)
+
+
+class Line(LineRead, table=True):
+    __tablename__ = "finance_line"
+
+    account: Account = Relationship()
+    tags: list[Tag] = Relationship(link_model=TagLineLink)
+
+
+class LinePublic(LineRead):
+    account: AccountRead
+    tags: list[TagRead]
+
+
+@event.listens_for(Line, "mapper_configured")
+def _set_active_history(mapper: Mapper[Line], cls: type[Line]):
+    """
+    In order to calculate deltas later, the original values for account_id,
+    amount, and transaction_id need to be preserved.
+    """
+
+    cls.account_id.impl.active_history = True
+    cls.amount.impl.active_history = True
+    cls.transaction_id.impl.active_history = True

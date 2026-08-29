@@ -6,9 +6,9 @@ from fastapi import status
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, StaticPool, create_engine
 
+from app.auth.models.user import User
 from app.database import get_db
 from app.main import app
-from app.models.user import User
 from app.upload import get_upload_path
 
 from . import (
@@ -68,7 +68,7 @@ def user_fixture(db: Session) -> User:
 
 def login_user(client: TestClient, email: str, password: str) -> None:
     response = client.post(
-        "/auth/login",
+        "/auth/session/login",
         json={
             "email": email,
             "password": password,

@@ -2,8 +2,10 @@ from collections.abc import Generator
 
 from sqlmodel import Session, SQLModel, create_engine
 
+from app.auth.models import *
 from app.config import Environment, settings
-from app.models import *
+from app.finance.models import *
+from app.registry.models import *
 
 connect_args = (
     {"check_same_thread": False} if settings.ENVIRONMENT == Environment.DEV else {}
