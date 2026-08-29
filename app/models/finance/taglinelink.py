@@ -2,7 +2,7 @@ from sqlmodel import Field, SQLModel
 
 
 class TagLineLink(SQLModel, table=True):
-    __tablename__ = "finance_tag_line_link"
+    __tablename__ = "finance_taglinelink"
 
     tag_id: int | None = Field(
         default=None,
