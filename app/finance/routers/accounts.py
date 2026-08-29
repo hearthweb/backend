@@ -3,11 +3,11 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from sqlmodel import Session, select
 
-from app.database import get_db
-from app.dependencies.auth import (
-    get_current_admin,
-    get_current_admin_responses,
+from app.auth.dependencies.user import (
+    require_permission,
+    require_permission_responses,
 )
+from app.database import get_db
 from app.finance.models.account import (
     Account,
     AccountRead,
@@ -25,10 +25,8 @@ router = APIRouter(prefix="/accounts")
 @router.get(
     "",
     summary="Get a list of all accounts",
-    dependencies=[Depends(get_current_admin)],
-    responses={
-        **get_current_admin_responses,
-    },
+    dependencies=[Depends(require_permission)],
+    responses={**require_permission_responses},
     operation_id="financeAccounts",
 )
 def finance_accounts(
@@ -40,10 +38,8 @@ def finance_accounts(
 @router.post(
     "",
     summary="Create a new account",
-    dependencies=[Depends(get_current_admin)],
-    responses={
-        **get_current_admin_responses,
-    },
+    dependencies=[Depends(require_permission)],
+    responses={**require_permission_responses},
     operation_id="financeAccountsCreate",
 )
 def finance_accounts_create(
@@ -60,9 +56,9 @@ def finance_accounts_create(
 @router.get(
     "/{id}",
     summary="Get a specific account",
-    dependencies=[Depends(get_current_admin)],
+    dependencies=[Depends(require_permission)],
     responses={
-        **get_current_admin_responses,
+        **require_permission_responses,
         **get_or_404_responses,
     },
     operation_id="financeAccountsById",
@@ -81,10 +77,8 @@ def finance_accounts_by_id(
 @router.get(
     "/{id}/lines",
     summary="Get lines that belong to a specific account",
-    dependencies=[Depends(get_current_admin)],
-    responses={
-        **get_current_admin_responses,
-    },
+    dependencies=[Depends(require_permission)],
+    responses={**require_permission_responses},
     operation_id="financeAccountsByIdLines",
 )
 def finance_accounts_by_id_lines(
@@ -98,9 +92,9 @@ def finance_accounts_by_id_lines(
     "/{id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete a specific account",
-    dependencies=[Depends(get_current_admin)],
+    dependencies=[Depends(require_permission)],
     responses={
-        **get_current_admin_responses,
+        **require_permission_responses,
         **get_or_404_responses,
     },
     operation_id="financeAccountsByIdDelete",

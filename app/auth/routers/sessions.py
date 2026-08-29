@@ -4,6 +4,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Header, HTTPException, Response, status
 from sqlmodel import Session, select
 
+from app.auth.dependencies.session import (
+    get_login_session,
+    get_login_session_responses,
+)
 from app.auth.models.session import Session as AuthSession
 from app.auth.models.user import (
     User,
@@ -12,7 +16,6 @@ from app.auth.models.user import (
 )
 from app.config import Environment, settings
 from app.database import get_db
-from app.dependencies.auth import get_login_session, get_login_session_responses
 from app.types import create_http_exception_response
 
 router = APIRouter(
@@ -30,9 +33,9 @@ router = APIRouter(
     operation_id="login",
 )
 def login(
+    db: Annotated[Session, Depends(get_db)],
     body: UserLogin,
     response: Response,
-    db: Annotated[Session, Depends(get_db)],
     user_agent: Annotated[str, Header()] = "Unknown",
 ) -> UserRead:
     credential_exception = HTTPException(
@@ -73,8 +76,8 @@ def login(
     operation_id="logout",
 )
 def logout(
-    session: Annotated[AuthSession, Depends(get_login_session)],
     db: Annotated[Session, Depends(get_db)],
+    session: Annotated[AuthSession, Depends(get_login_session)],
 ) -> None:
     db.delete(session)
     db.commit()

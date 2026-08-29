@@ -6,11 +6,11 @@ from fastapi import APIRouter, Depends, File, Form, Response, UploadFile, status
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
-from app.database import get_db
-from app.dependencies.auth import (
-    get_current_admin,
-    get_current_admin_responses,
+from app.auth.dependencies.user import (
+    require_permission,
+    require_permission_responses,
 )
+from app.database import get_db
 from app.registry.models.document import (
     Document,
     DocumentPublic,
@@ -24,10 +24,8 @@ router = APIRouter(prefix="/documents")
 @router.get(
     "",
     summary="Get a list of all documents",
-    dependencies=[Depends(get_current_admin)],
-    responses={
-        **get_current_admin_responses,
-    },
+    dependencies=[Depends(require_permission)],
+    responses={**require_permission_responses},
     operation_id="registryDocuments",
 )
 def registry_documents(
@@ -41,10 +39,8 @@ def registry_documents(
 @router.post(
     "",
     summary="Create a new document",
-    dependencies=[Depends(get_current_admin)],
-    responses={
-        **get_current_admin_responses,
-    },
+    dependencies=[Depends(require_permission)],
+    responses={**require_permission_responses},
     operation_id="registryDocumentsCreate",
 )
 def registry_documents_create(
@@ -75,9 +71,9 @@ def registry_documents_create(
     "/{id}/download",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Download a document",
-    dependencies=[Depends(get_current_admin)],
+    dependencies=[Depends(require_permission)],
     responses={
-        **get_current_admin_responses,
+        **require_permission_responses,
         **get_or_404_responses,
     },
     operation_id="registryDocumentsByIdDownload",
@@ -106,9 +102,9 @@ def registry_documents_by_id_download(
     "/{id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete a specific document",
-    dependencies=[Depends(get_current_admin)],
+    dependencies=[Depends(require_permission)],
     responses={
-        **get_current_admin_responses,
+        **require_permission_responses,
         **get_or_404_responses,
     },
     operation_id="registryDocumentsByIdDelete",

@@ -3,12 +3,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from sqlmodel import Session, select
 
+from app.auth.dependencies.user import (
+    require_permission,
+    require_permission_responses,
+)
 from app.auth.models.user import User
 from app.database import get_db
-from app.dependencies.auth import (
-    get_current_admin,
-    get_current_admin_responses,
-)
 from app.registry.models.credential import (
     Credential,
     CredentialRead,
@@ -22,10 +22,8 @@ router = APIRouter(prefix="/credentials")
 @router.get(
     "",
     summary="Get a list of all credentials",
-    dependencies=[Depends(get_current_admin)],
-    responses={
-        **get_current_admin_responses,
-    },
+    dependencies=[Depends(require_permission)],
+    responses={**require_permission_responses},
     operation_id="registryCredentials",
 )
 def registry_credentials(
@@ -37,15 +35,13 @@ def registry_credentials(
 @router.post(
     "",
     summary="Create a new credential",
-    responses={
-        **get_current_admin_responses,
-    },
+    responses={**require_permission_responses},
     operation_id="registryCredentialsCreate",
 )
 def registry_credentials_create(
     body: CredentialWrite,
     db: Annotated[Session, Depends(get_db)],
-    user: Annotated[User, Depends(get_current_admin)],
+    user: Annotated[User, Depends(require_permission)],
 ) -> CredentialRead:
     credential = Credential.model_validate(body)
     db.add(credential)
@@ -58,9 +54,9 @@ def registry_credentials_create(
     "/{id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete a specific credential",
-    dependencies=[Depends(get_current_admin)],
+    dependencies=[Depends(require_permission)],
     responses={
-        **get_current_admin_responses,
+        **require_permission_responses,
         **get_or_404_responses,
     },
     operation_id="registryCredentialsByIdDelete",

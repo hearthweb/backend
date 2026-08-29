@@ -5,7 +5,6 @@ from fastapi import Cookie, Depends, HTTPException, status
 from sqlmodel import Session, func, select
 
 from app.auth.models.session import Session as AuthSession
-from app.auth.models.user import User
 from app.database import get_db
 from app.types import create_http_exception_response
 
@@ -18,61 +17,34 @@ def get_login_session(
     Verify that a valid login session was provided and if it is less than 30
     minutes from expiry, extend the session
     """
+
+    # Lookup the session and confirm it was completed and has not expired
     session = db.exec(
         select(AuthSession)
         .where(AuthSession.id == session_id)
+        .where(AuthSession.completed == True)
         .where(AuthSession.expires > func.now())
         .with_for_update(),
     ).one_or_none()
+
+    # If none was found raise a 401 error
     if session is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated",
+            detail="Not authorized",
         )
+
+    # If the session is within the refresh threshold, extend it
     now = datetime.now(UTC)
-    refresh_threshold = now + timedelta(minutes=30)
-    if session.expires < refresh_threshold:
+    if session.expires < now + timedelta(minutes=30):
         session.expires = now + timedelta(hours=1)
         db.add(session)
         db.commit()
+
+    # Return the valid session
     return session
 
 
 get_login_session_responses = {
-    **create_http_exception_response(401, "Invalid credentials"),
-}
-
-
-def get_current_user(
-    session: Annotated[AuthSession, Depends(get_login_session)],
-) -> User:
-    """
-    Get the currently logged in user; raise an exception if there is none
-    """
-    return session.user
-
-
-get_current_user_responses = {
-    **get_login_session_responses,
-}
-
-
-def get_current_admin(
-    user: Annotated[User, Depends(get_current_user)],
-) -> User:
-    """
-    Get the currently logged in admin; raise an exception if there is no
-    logged in user or the current user is not an admin
-    """
-    if not user.is_admin:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized",
-        )
-    return user
-
-
-get_current_admin_responses = {
-    **get_current_user_responses,
-    **create_http_exception_response(403, "Not authorized"),
+    **create_http_exception_response(401, "Unauthorized"),
 }

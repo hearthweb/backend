@@ -4,11 +4,11 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
-from app.database import get_db
-from app.dependencies.auth import (
-    get_current_admin,
-    get_current_admin_responses,
+from app.auth.dependencies.user import (
+    require_permission,
+    require_permission_responses,
 )
+from app.database import get_db
 from app.finance.models.line import Line
 from app.finance.models.tag import Tag
 from app.finance.models.transaction import (
@@ -25,10 +25,8 @@ router = APIRouter(prefix="/transactions")
 @router.get(
     "",
     summary="Get a list of all transactions",
-    dependencies=[Depends(get_current_admin)],
-    responses={
-        **get_current_admin_responses,
-    },
+    dependencies=[Depends(require_permission)],
+    responses={**require_permission_responses},
     operation_id="financeTransactions",
 )
 def finance_transactions(
@@ -40,10 +38,8 @@ def finance_transactions(
 @router.post(
     "",
     summary="Create a new transaction",
-    dependencies=[Depends(get_current_admin)],
-    responses={
-        **get_current_admin_responses,
-    },
+    dependencies=[Depends(require_permission)],
+    responses={**require_permission_responses},
     operation_id="financeTransactionsCreate",
 )
 def finance_transactions_create(
@@ -70,9 +66,9 @@ def finance_transactions_create(
 @router.get(
     "/{id}",
     summary="Get a specific transaction",
-    dependencies=[Depends(get_current_admin)],
+    dependencies=[Depends(require_permission)],
     responses={
-        **get_current_admin_responses,
+        **require_permission_responses,
         **get_or_404_responses,
     },
     operation_id="financeTransactionsById",
@@ -97,9 +93,9 @@ def finance_transactions_by_id(
     "/{id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete a specific transaction",
-    dependencies=[Depends(get_current_admin)],
+    dependencies=[Depends(require_permission)],
     responses={
-        **get_current_admin_responses,
+        **require_permission_responses,
         **get_or_404_responses,
     },
     operation_id="financeTransactionsByIdDelete",

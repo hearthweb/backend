@@ -3,18 +3,18 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from sqlmodel import Session, select
 
+from app.auth.dependencies.user import (
+    get_current_user,
+    get_current_user_responses,
+    require_permission,
+    require_permission_responses,
+)
 from app.auth.models.user import (
     User,
     UserCreate,
     UserRead,
 )
 from app.database import get_db
-from app.dependencies.auth import (
-    get_current_admin,
-    get_current_admin_responses,
-    get_current_user,
-    get_current_user_responses,
-)
 from app.utils import get_or_404, get_or_404_responses
 
 router = APIRouter(
@@ -26,9 +26,9 @@ router = APIRouter(
 @router.get(
     "",
     summary="Get a list of all users",
-    dependencies=[Depends(get_current_admin)],
-    responses={**get_current_admin_responses},
-    operation_id="users",
+    dependencies=[Depends(require_permission)],
+    responses={**require_permission_responses},
+    operation_id="authUsers",
 )
 def users(
     db: Annotated[Session, Depends(get_db)],
@@ -40,7 +40,7 @@ def users(
     "/me",
     summary="Get the current user's information",
     responses={**get_current_user_responses},
-    operation_id="usersMe",
+    operation_id="authUsersMe",
 )
 def users_me(
     user: Annotated[User, Depends(get_current_user)],
@@ -51,12 +51,12 @@ def users_me(
 @router.get(
     "/{user_id}",
     summary="Get a specific user's information",
-    dependencies=[Depends(get_current_admin)],
+    dependencies=[Depends(require_permission)],
     responses={
-        **get_current_admin_responses,
+        **require_permission_responses,
         **get_or_404_responses,
     },
-    operation_id="usersById",
+    operation_id="authUsersById",
 )
 def users_user_id(
     user_id: int,
@@ -70,11 +70,9 @@ def users_user_id(
 @router.post(
     "",
     summary="Create a new user",
-    dependencies=[Depends(get_current_admin)],
-    responses={
-        **get_current_admin_responses,
-    },
-    operation_id="usersCreate",
+    dependencies=[Depends(require_permission)],
+    responses={**require_permission_responses},
+    operation_id="authUsersCreate",
 )
 def users_create(
     body: UserCreate,
@@ -91,12 +89,12 @@ def users_create(
     "/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete a specific user",
-    dependencies=[Depends(get_current_admin)],
+    dependencies=[Depends(require_permission)],
     responses={
-        **get_current_admin_responses,
+        **require_permission_responses,
         **get_or_404_responses,
     },
-    operation_id="usersByIdDelete",
+    operation_id="authUsersByIdDelete",
 )
 def users_user_id_delete(
     user_id: int,
