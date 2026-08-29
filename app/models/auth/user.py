@@ -2,7 +2,10 @@ from datetime import date
 
 from pwdlib import PasswordHash
 from sqlalchemy import Date, String
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+from app.models.auth.role import Role
+from app.models.auth.userrolelink import UserRoleLink
 
 password_hash = PasswordHash.recommended()
 
@@ -37,6 +40,9 @@ class UserAdminWrite(UserWrite):
 
 class UserRead(UserAdminWrite):
     id: int | None = Field(default=None, primary_key=True)
+    roles: list[Role] = Relationship(
+        link_model=UserRoleLink,
+    )
 
 
 class User(UserRead, table=True):

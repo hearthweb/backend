@@ -5,6 +5,7 @@ from .rolepermissionlink import RolePermissionLink
 from .session import Session
 from .totp import Totp
 from .user import User
+from .userrolelink import UserRoleLink
 
 __all__ = [
     "Permission",
@@ -14,4 +15,5 @@ __all__ = [
     "Session",
     "Totp",
     "User",
+    "UserRoleLink",
 ]
