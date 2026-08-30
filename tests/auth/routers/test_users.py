@@ -13,22 +13,23 @@ from . import (
 
 def test_users(
     client: TestClient,
-    logged_in_admin: User,
-    user: User,
+    logged_in_user: User,
 ):
     response = client.get("/auth/users")
     assert response.status_code == status.HTTP_200_OK
     assert compare_sorted(
         response.json(),
         [
-            dump(UserRead, logged_in_admin),
-            dump(UserRead, user),
+            dump(UserRead, logged_in_user),
         ],
         "id",
     )
 
 
-def test_users_me(client: TestClient, logged_in_user: User):
+def test_users_me(
+    client: TestClient,
+    logged_in_user: User,
+):
     response = client.get("/auth/users/me")
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == dump(UserRead, logged_in_user)
@@ -36,7 +37,7 @@ def test_users_me(client: TestClient, logged_in_user: User):
 
 def test_users_user_id(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     user: User,
 ):
     response = client.get(f"/auth/users/{user.id}")
@@ -46,13 +47,13 @@ def test_users_user_id(
 
 def test_users_create(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     db: Session,
 ):
     response = client.post(
         "/auth/users",
         json={
-            "email": USER_EMAIL,
+            "email": USER_EMAIL + "2",
             "password": USER_PASSWORD,
         },
     )
@@ -63,7 +64,7 @@ def test_users_create(
 
 def test_users_id_delete(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     user: User,
     db: Session,
 ):

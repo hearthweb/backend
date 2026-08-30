@@ -1,8 +1,8 @@
 import typer
 
 from app import init
+from app.auth.models.user import User
 from app.database import db_context, init_db
-from app.models.auth import User
 
 app = typer.Typer()
 
@@ -13,9 +13,9 @@ def startup():
 
 
 @app.command(
-    help="Create an admin user",
+    help="Create a user",
 )
-def create_admin(
+def create_user(
     email: str = typer.Option(prompt=True),
     password: str = typer.Option(
         prompt=True,
@@ -24,10 +24,7 @@ def create_admin(
     ),
 ):
     with db_context() as db:
-        user = User(
-            email=email,
-            is_admin=True,
-        )
+        user = User(email=email)
         user.set_password(password)
         db.add(user)
         db.commit()

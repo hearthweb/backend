@@ -18,7 +18,7 @@ from . import (
 
 def test_registry_credentials(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     credential: Credential,
 ):
     response = client.get("/registry/credentials")
@@ -34,7 +34,7 @@ def test_registry_credentials(
 
 def test_registry_credentials_create(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     db: Session,
 ):
     response = client.post(
@@ -52,7 +52,7 @@ def test_registry_credentials_create(
 
 def test_registry_credentials_by_id_delete(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     credential: Credential,
     db: Session,
 ):

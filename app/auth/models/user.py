@@ -2,10 +2,7 @@ from datetime import date
 
 from pwdlib import PasswordHash
 from sqlalchemy import Date, String
-from sqlmodel import Field, Relationship, SQLModel
-
-from app.auth.models.role import Role
-from app.auth.models.userrolelink import UserRoleLink
+from sqlmodel import Field, SQLModel
 
 password_hash = PasswordHash.recommended()
 
@@ -34,12 +31,7 @@ class UserCreate(UserWrite):
     password: str
 
 
-class UserAdminWrite(UserWrite):
-    is_active: bool = Field(default=True)
-    is_admin: bool = Field(default=False)
-
-
-class UserRead(UserAdminWrite):
+class UserRead(UserWrite):
     id: int | None = Field(default=None, primary_key=True)
 
 
@@ -49,9 +41,6 @@ class User(UserRead, table=True):
     hashed_password: str = Field(
         default="",
         sa_type=String(255),
-    )
-    roles: list[Role] = Relationship(
-        link_model=UserRoleLink,
     )
 
     def set_password(self, password: str) -> None:
@@ -68,10 +57,6 @@ class User(UserRead, table=True):
             + "zkCbYMPYw31MI+n24Zg$4steBPCprRmI"
             + "jkaUBeC+yPxXRTU5p0GAarRLjQvYvs4",
         )
-
-
-class UserPublic(UserRead):
-    roles: list[Role]
 
 
 class UserLogin(SQLModel):

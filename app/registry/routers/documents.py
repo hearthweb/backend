@@ -6,9 +6,9 @@ from fastapi import APIRouter, Depends, File, Form, Response, UploadFile, status
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
-from app.auth.dependencies.user import (
-    require_permission,
-    require_permission_responses,
+from app.auth.dependencies.session import (
+    get_login_session,
+    get_login_session_responses,
 )
 from app.database import get_db
 from app.registry.models.document import (
@@ -21,14 +21,14 @@ from app.utils import get_or_404, get_or_404_responses
 router = APIRouter(
     prefix="/documents",
     tags=["Documents"],
+    dependencies=[Depends(get_login_session)],
+    responses={**get_login_session_responses},
 )
 
 
 @router.get(
     "",
     summary="Get a list of all documents",
-    dependencies=[Depends(require_permission)],
-    responses={**require_permission_responses},
     operation_id="registryDocuments",
 )
 def documents(
@@ -42,8 +42,6 @@ def documents(
 @router.post(
     "",
     summary="Create a new document",
-    dependencies=[Depends(require_permission)],
-    responses={**require_permission_responses},
     operation_id="registryDocumentsCreate",
 )
 def documents_create(
@@ -74,11 +72,7 @@ def documents_create(
     "/{id}/download",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Download a document",
-    dependencies=[Depends(require_permission)],
-    responses={
-        **require_permission_responses,
-        **get_or_404_responses,
-    },
+    responses={**get_or_404_responses},
     operation_id="registryDocumentsByIdDownload",
 )
 def documents_by_id_download(
@@ -105,11 +99,7 @@ def documents_by_id_download(
     "/{id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete a specific document",
-    dependencies=[Depends(require_permission)],
-    responses={
-        **require_permission_responses,
-        **get_or_404_responses,
-    },
+    responses={**get_or_404_responses},
     operation_id="registryDocumentsByIdDelete",
 )
 def documents_by_id_delete(

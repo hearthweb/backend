@@ -3,11 +3,13 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from sqlmodel import Session, select
 
+from app.auth.dependencies.session import (
+    get_login_session,
+    get_login_session_responses,
+)
 from app.auth.dependencies.user import (
     get_current_user,
     get_current_user_responses,
-    require_permission,
-    require_permission_responses,
 )
 from app.auth.models.user import (
     User,
@@ -20,14 +22,14 @@ from app.utils import get_or_404, get_or_404_responses
 router = APIRouter(
     prefix="/users",
     tags=["Users"],
+    dependencies=[Depends(get_login_session)],
+    responses={**get_login_session_responses},
 )
 
 
 @router.get(
     "",
     summary="Get a list of all users",
-    dependencies=[Depends(require_permission)],
-    responses={**require_permission_responses},
     operation_id="authUsers",
 )
 def users(
@@ -51,11 +53,7 @@ def users_me(
 @router.get(
     "/{user_id}",
     summary="Get a specific user's information",
-    dependencies=[Depends(require_permission)],
-    responses={
-        **require_permission_responses,
-        **get_or_404_responses,
-    },
+    responses={**get_or_404_responses},
     operation_id="authUsersById",
 )
 def users_by_id(
@@ -70,8 +68,6 @@ def users_by_id(
 @router.post(
     "",
     summary="Create a new user",
-    dependencies=[Depends(require_permission)],
-    responses={**require_permission_responses},
     operation_id="authUsersCreate",
 )
 def users_create(
@@ -89,11 +85,7 @@ def users_create(
     "/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete a specific user",
-    dependencies=[Depends(require_permission)],
-    responses={
-        **require_permission_responses,
-        **get_or_404_responses,
-    },
+    responses={**get_or_404_responses},
     operation_id="authUsersByIdDelete",
 )
 def users_by_id_delete(

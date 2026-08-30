@@ -22,7 +22,7 @@ from . import (
 
 def test_registry_documents(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     document: Document,
 ):
     response = client.get("/registry/documents")
@@ -38,7 +38,7 @@ def test_registry_documents(
 
 def test_registry_documents_create(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     category: Category,
     tmp_path: str,
     db: Session,
@@ -67,7 +67,7 @@ def test_registry_documents_create(
 
 def test_registry_documents_by_id_download(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     document: Document,
     tmp_path: str,
 ):
@@ -80,7 +80,7 @@ def test_registry_documents_by_id_download(
 
 def test_registry_documents_by_id_delete(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     document: Document,
     db: Session,
 ):

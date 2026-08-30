@@ -11,7 +11,7 @@ from tests.utils import compare_sorted, dump
 
 def test_registry_categories(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     category: Category,
 ):
     response = client.get("/registry/categories")

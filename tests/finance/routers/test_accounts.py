@@ -12,7 +12,7 @@ from . import ACCOUNT_NAME
 
 def test_finance_accounts(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     account: Account,
     db: Session,
 ):
@@ -29,7 +29,7 @@ def test_finance_accounts(
 
 def test_finance_accounts_create(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     db: Session,
 ):
     response = client.post(
@@ -45,7 +45,7 @@ def test_finance_accounts_create(
 
 def test_finance_accounts_by_id(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     account: Account,
 ):
     response = client.get(f"/finance/accounts/{account.id}")
@@ -55,7 +55,7 @@ def test_finance_accounts_by_id(
 
 def test_finance_accounts_by_id_lines(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     account: Account,
     line: Line,
     db: Session,
@@ -73,7 +73,7 @@ def test_finance_accounts_by_id_lines(
 
 def test_finance_accounts_by_id_delete(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     account: Account,
     db: Session,
 ):

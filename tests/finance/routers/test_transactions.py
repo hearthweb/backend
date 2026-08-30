@@ -23,7 +23,7 @@ from . import (
 
 def test_finance_transactions(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     transaction: Transaction,
 ):
     response = client.get("/finance/transactions")
@@ -39,7 +39,7 @@ def test_finance_transactions(
 
 def test_finance_transactions_create(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     account: Account,
     db: Session,
 ):
@@ -69,7 +69,7 @@ def test_finance_transactions_create(
 
 def test_finance_transactions_by_id(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     transaction: Transaction,
     line: Line,
 ):
@@ -80,7 +80,7 @@ def test_finance_transactions_by_id(
 
 def test_finance_transactions_by_id_delete(
     client: TestClient,
-    logged_in_admin: User,
+    logged_in_user: User,
     transaction: Transaction,
     db: Session,
 ):
