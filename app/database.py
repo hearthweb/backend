@@ -1,6 +1,7 @@
 from collections.abc import Generator
 
-from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel import Session as DBSession
+from sqlmodel import SQLModel, create_engine
 
 from app.auth.models import *
 from app.config import Environment, settings
@@ -18,14 +19,14 @@ engine = create_engine(
 )
 
 
-def init_db() -> None:
-    SQLModel.metadata.create_all(engine)
+def db_context() -> DBSession:
+    return DBSession(engine)
 
 
-def db_context():
-    return Session(engine)
-
-
-def get_db() -> Generator[Session]:
+def get_db() -> Generator[DBSession]:
     with db_context() as session:
         yield session
+
+
+def init_db() -> None:
+    SQLModel.metadata.create_all(engine)
