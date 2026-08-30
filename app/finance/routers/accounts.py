@@ -19,7 +19,10 @@ from app.finance.models.line import (
 )
 from app.utils import get_or_404, get_or_404_responses
 
-router = APIRouter(prefix="/accounts")
+router = APIRouter(
+    prefix="/accounts",
+    tags=["Accounts"],
+)
 
 
 @router.get(

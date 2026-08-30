@@ -10,7 +10,10 @@ from app.auth.dependencies.user import (
 from app.database import get_db
 from app.registry.models.category import Category
 
-router = APIRouter(prefix="/categories")
+router = APIRouter(
+    prefix="/categories",
+    tags=["Categories"],
+)
 
 
 @router.get(
