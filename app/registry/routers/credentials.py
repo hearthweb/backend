@@ -17,7 +17,6 @@ from app.utils import get_or_404, get_or_404_responses
 
 router = APIRouter(
     prefix="/credentials",
-    tags=["Credentials"],
     dependencies=[Depends(get_login_session)],
     responses={**get_login_session_responses},
 )

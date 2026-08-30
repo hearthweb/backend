@@ -12,7 +12,6 @@ from app.registry.models.category import Category
 
 router = APIRouter(
     prefix="/categories",
-    tags=["Categories"],
     dependencies=[Depends(get_login_session)],
     responses={**get_login_session_responses},
 )

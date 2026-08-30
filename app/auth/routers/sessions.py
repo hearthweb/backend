@@ -18,10 +18,7 @@ from app.config import Environment, settings
 from app.database import get_db
 from app.types import create_http_exception_response
 
-router = APIRouter(
-    prefix="/session",
-    tags=["Session"],
-)
+router = APIRouter(prefix="/session")
 
 
 @router.post(

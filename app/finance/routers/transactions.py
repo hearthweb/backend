@@ -21,7 +21,6 @@ from app.utils import get_or_404, get_or_404_responses
 
 router = APIRouter(
     prefix="/transactions",
-    tags=["Transactions"],
     dependencies=[Depends(get_login_session)],
     responses={**get_login_session_responses},
 )
