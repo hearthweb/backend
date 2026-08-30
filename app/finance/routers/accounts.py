@@ -29,7 +29,7 @@ router = APIRouter(prefix="/accounts")
     responses={**require_permission_responses},
     operation_id="financeAccounts",
 )
-def finance_accounts(
+def accounts(
     db: Annotated[Session, Depends(get_db)],
 ) -> list[AccountRead]:
     return db.exec(select(Account))
@@ -42,7 +42,7 @@ def finance_accounts(
     responses={**require_permission_responses},
     operation_id="financeAccountsCreate",
 )
-def finance_accounts_create(
+def accounts_create(
     body: AccountWrite,
     db: Annotated[Session, Depends(get_db)],
 ) -> AccountRead:
@@ -63,7 +63,7 @@ def finance_accounts_create(
     },
     operation_id="financeAccountsById",
 )
-def finance_accounts_by_id(
+def accounts_by_id(
     id: int,
     db: Annotated[Session, Depends(get_db)],
 ) -> AccountRead:
@@ -81,7 +81,7 @@ def finance_accounts_by_id(
     responses={**require_permission_responses},
     operation_id="financeAccountsByIdLines",
 )
-def finance_accounts_by_id_lines(
+def accounts_by_id_lines(
     id: int,
     db: Annotated[Session, Depends(get_db)],
 ) -> list[LineRead]:
@@ -99,7 +99,7 @@ def finance_accounts_by_id_lines(
     },
     operation_id="financeAccountsByIdDelete",
 )
-def finance_accounts_by_id_delete(
+def accounts_by_id_delete(
     id: int,
     db: Annotated[Session, Depends(get_db)],
 ) -> None:

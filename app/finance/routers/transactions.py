@@ -29,7 +29,7 @@ router = APIRouter(prefix="/transactions")
     responses={**require_permission_responses},
     operation_id="financeTransactions",
 )
-def finance_transactions(
+def transactions(
     db: Annotated[Session, Depends(get_db)],
 ) -> list[TransactionRead]:
     return db.exec(select(Transaction))
@@ -42,7 +42,7 @@ def finance_transactions(
     responses={**require_permission_responses},
     operation_id="financeTransactionsCreate",
 )
-def finance_transactions_create(
+def transactions_create(
     body: TransactionCreate,
     db: Annotated[Session, Depends(get_db)],
 ) -> TransactionRead:
@@ -73,7 +73,7 @@ def finance_transactions_create(
     },
     operation_id="financeTransactionsById",
 )
-def finance_transactions_by_id(
+def transactions_by_id(
     id: int,
     db: Annotated[Session, Depends(get_db)],
 ) -> TransactionPublic:
@@ -100,7 +100,7 @@ def finance_transactions_by_id(
     },
     operation_id="financeTransactionsByIdDelete",
 )
-def finance_transactions_by_id_delete(
+def transactions_by_id_delete(
     id: int,
     db: Annotated[Session, Depends(get_db)],
 ) -> None:

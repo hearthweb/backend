@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request, status
+from fastapi.routing import APIRoute
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
@@ -66,12 +67,12 @@ def require_permission(
         return User
 
     # Determine the name of the permission based on the route
-    endpoint = request.scope.get("endpoint")
+    route: APIRoute = request.scope.get("route")
 
     # Check if the permission is in any of the user's roles
     for r in user.roles:
         for p in r.permissions:
-            if p.name in endpoint.__name__:
+            if p.name in route.operation_id:
                 return User
 
     # User does not have the permission

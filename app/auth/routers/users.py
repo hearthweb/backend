@@ -58,7 +58,7 @@ def users_me(
     },
     operation_id="authUsersById",
 )
-def users_user_id(
+def users_by_id(
     user_id: int,
     db: Annotated[Session, Depends(get_db)],
 ) -> UserRead:
@@ -96,7 +96,7 @@ def users_create(
     },
     operation_id="authUsersByIdDelete",
 )
-def users_user_id_delete(
+def users_by_id_delete(
     user_id: int,
     db: Annotated[Session, Depends(get_db)],
 ) -> None:

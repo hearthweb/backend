@@ -26,7 +26,7 @@ router = APIRouter(prefix="/credentials")
     responses={**require_permission_responses},
     operation_id="registryCredentials",
 )
-def registry_credentials(
+def credentials(
     db: Annotated[Session, Depends(get_db)],
 ) -> list[CredentialRead]:
     return db.exec(select(Credential))
@@ -38,7 +38,7 @@ def registry_credentials(
     responses={**require_permission_responses},
     operation_id="registryCredentialsCreate",
 )
-def registry_credentials_create(
+def credentials_create(
     body: CredentialWrite,
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[User, Depends(require_permission)],
@@ -61,7 +61,7 @@ def registry_credentials_create(
     },
     operation_id="registryCredentialsByIdDelete",
 )
-def registry_credentials_by_id_delete(
+def credentials_by_id_delete(
     id: int,
     db: Annotated[Session, Depends(get_db)],
 ) -> None:

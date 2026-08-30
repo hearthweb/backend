@@ -28,7 +28,7 @@ router = APIRouter(prefix="/documents")
     responses={**require_permission_responses},
     operation_id="registryDocuments",
 )
-def registry_documents(
+def documents(
     db: Annotated[Session, Depends(get_db)],
 ) -> list[DocumentPublic]:
     return db.exec(
@@ -43,7 +43,7 @@ def registry_documents(
     responses={**require_permission_responses},
     operation_id="registryDocumentsCreate",
 )
-def registry_documents_create(
+def documents_create(
     file: Annotated[UploadFile, File()],
     name: Annotated[str, Form()],
     category_id: Annotated[int, Form()],
@@ -78,7 +78,7 @@ def registry_documents_create(
     },
     operation_id="registryDocumentsByIdDownload",
 )
-def registry_documents_by_id_download(
+def documents_by_id_download(
     id: int,
     db: Annotated[Session, Depends(get_db)],
     upload_path: Annotated[Path, Depends(get_upload_path)],
@@ -109,7 +109,7 @@ def registry_documents_by_id_download(
     },
     operation_id="registryDocumentsByIdDelete",
 )
-def registry_documents_by_id_delete(
+def documents_by_id_delete(
     id: int,
     db: Annotated[Session, Depends(get_db)],
     upload_path: Annotated[Path, Depends(get_upload_path)],

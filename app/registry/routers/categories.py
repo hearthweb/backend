@@ -20,7 +20,7 @@ router = APIRouter(prefix="/categories")
     responses={**require_permission_responses},
     operation_id="registryCategories",
 )
-def registry_categories(
+def categories(
     db: Annotated[Session, Depends(get_db)],
 ) -> list[Category]:
     return db.exec(select(Category))

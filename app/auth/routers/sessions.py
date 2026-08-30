@@ -30,7 +30,7 @@ router = APIRouter(
     responses={
         **create_http_exception_response(401, "Invalid credentials"),
     },
-    operation_id="login",
+    operation_id="authSessionlogin",
 )
 def login(
     db: Annotated[Session, Depends(get_db)],
@@ -74,7 +74,7 @@ def login(
     status_code=status.HTTP_204_NO_CONTENT,
     summary="End the current session",
     responses={**get_login_session_responses},
-    operation_id="logout",
+    operation_id="authSessionlogout",
 )
 def logout(
     db: Annotated[Session, Depends(get_db)],
