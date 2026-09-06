@@ -2,7 +2,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Response, status
-from sqlmodel import Session, select
+from sqlmodel import Session, delete, select
 
 from app.auth.dependencies.session import (
     get_login_session,
@@ -83,3 +83,19 @@ def logout(
 ) -> None:
     db.delete(session)
     db.commit()
+
+
+@router.post(
+    "/logout/all",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="End all active sessions for the current user",
+    responses={**get_login_session_responses},
+    operation_id="authSessionLogoutAll",
+)
+def logout_all(
+    db: Annotated[Session, Depends(get_db)],
+    session: Annotated[AuthSession, Depends(get_login_session)],
+) -> None:
+    db.exec(
+        delete(AuthSession).where(AuthSession.user_id == session.user_id),
+    )
