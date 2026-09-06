@@ -115,7 +115,7 @@ def verify(
         delete(TotpRecoveryCode).where(TotpRecoveryCode.totp_user_id == user.id),
     )
     codes: list[str] = []
-    for i in range(8):
+    for _ in range(8):
         code = secrets.token_hex(8)
         codes.append(code)
         db.add(
