@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     # Key used for session management; cannot be empty in prod
     SECRET_KEY: str = ""
 
+    # Key use for encrypting TOTP keys
+    TOTP_ENCRYPTION_KEY: str = ""
+
     @property
     def DATABASE_URL(self) -> str:
         match self.ENVIRONMENT:

@@ -1,4 +1,8 @@
+import pyotp
+from cryptography.fernet import Fernet
 from sqlmodel import Field, SQLModel
+
+from app.config import settings
 
 
 class Totp(SQLModel, table=True):
@@ -10,5 +14,59 @@ class Totp(SQLModel, table=True):
         unique=True,
         index=True,
     )
-    encrypted_secret: bytes
+    encrypted_secret: str
+    encrypted_secret_new: str
+    last_code: str
+
+    @staticmethod
+    def _fernet() -> Fernet:
+        return Fernet(settings.TOTP_ENCRYPTION_KEY.encode())
+
+    @classmethod
+    def _totp(cls, encrypted_secret: str) -> pyotp.TOTP:
+        return pyotp.TOTP(cls._fernet().decrypt(encrypted_secret).decode())
+
+    @classmethod
+    def verify_code(cls, encrypted_secret: str, code: str) -> bool:
+        return cls._totp(encrypted_secret).verify(code)
+
+    def set_secret(self, secret: str | None) -> None:
+        self.encrypted_secret_new = self._fernet().encrypt(secret.encode())
+
+
+class TotpRecoveryCode(SQLModel, table=True):
+    __tablenme__ = "auth_totprecoverycode"
+
+    id: int | None = Field(default=None, primary_key=True)
+    totp_user_id: int = Field(
+        foreign_key="auth_totp.user_id",
+        ondelete="CASCADE",
+        index=True,
+    )
+    code_hash: str
+
+
+class TotpRead(SQLModel):
+    enabled: bool
     verified: bool
+
+
+class TotpCreateParams(SQLModel):
+    password: str
+    code: str
+
+
+class TotpSecret(SQLModel):
+    secret: str
+
+
+class TotpVerifyParams(SQLModel):
+    code: str
+
+
+class TotpRecoveryCodes(SQLModel):
+    codes: list[str]
+
+
+class TotpDeleteParams(SQLModel):
+    code: str
