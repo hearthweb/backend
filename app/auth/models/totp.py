@@ -37,8 +37,8 @@ class Totp(SQLModel, table=True):
     ) -> bool:
         return cls._totp(encrypted_secret).verify(code, current_time)
 
-    def set_secret(self, secret: str | None) -> None:
-        self.encrypted_secret_new = self._fernet().encrypt(secret.encode())
+    def set_secret(self, secret: str) -> None:
+        self.encrypted_secret_new = self._fernet().encrypt(secret.encode()).decode()
 
 
 class TotpRecoveryCode(SQLModel, table=True):
