@@ -73,7 +73,3 @@ class TotpVerifyParams(SQLModel):
 
 class TotpRecoveryCodes(SQLModel):
     codes: list[str]
-
-
-class TotpDeleteParams(SQLModel):
-    code: str

@@ -14,7 +14,6 @@ from app.auth.dependencies.user import (
 from app.auth.models.totp import (
     Totp,
     TotpCreateParams,
-    TotpDeleteParams,
     TotpRead,
     TotpRecoveryCode,
     TotpRecoveryCodes,
@@ -139,14 +138,17 @@ def verify(
     operation_id="authTotpDelete",
 )
 def totp_delete(
-    body: TotpDeleteParams,
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[User, Depends(get_current_user)],
+    current_time: Annotated[datetime, Depends(get_current_time)],
+    code: str,
 ) -> None:
-    totp = db.exec(
-        select(Totp).where(Totp.user_id == user.id).with_for_update(),
+    totp = get_or_404(
+        db.exec(
+            select(Totp).where(Totp.user_id == user.id).with_for_update(),
+        ).one_or_none(),
     )
-    if not totp.verify_code(totp.encrypted_secret_new, body.code):
+    if not totp.verify_code(totp.encrypted_secret, code, current_time):
         raise credential_exception
     db.delete(totp)
     db.commit()
