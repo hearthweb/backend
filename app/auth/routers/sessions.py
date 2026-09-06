@@ -24,13 +24,20 @@ from app.types import create_http_exception_response
 
 router = APIRouter(prefix="/sessions")
 
+credential_exception = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Invalid credentials",
+)
+
+credential_exception_responses = {
+    **create_http_exception_response(401, "Invalid credentials"),
+}
+
 
 @router.post(
     "/login",
     summary="Begin login with an email and password",
-    responses={
-        **create_http_exception_response(401, "Invalid credentials"),
-    },
+    responses={**credential_exception_responses},
     operation_id="authSessionLogin",
 )
 def login(
@@ -39,10 +46,6 @@ def login(
     response: Response,
     user_agent: Annotated[str, Header()] = "Unknown",
 ) -> UserRead:
-    credential_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid credentials",
-    )
     user = db.exec(
         select(User).where(User.email == body.email),
     ).one_or_none()
