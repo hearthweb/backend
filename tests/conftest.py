@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -10,6 +11,7 @@ from app.auth.models.user import User
 from app.database import get_db
 from app.main import app
 from app.upload import get_upload_path
+from app.utils import get_current_time
 
 from . import (
     USER_EMAIL,
@@ -34,12 +36,17 @@ def client_fixture(
     db: Session,
     tmp_path: str,
 ) -> Generator[TestClient]:
+
+    def override_get_current_time() -> datetime:
+        return datetime(2000, 1, 1, tzinfo=UTC)
+
     def override_get_db() -> Generator[Session]:
         yield db
 
     def override_get_upload_path() -> Path:
         return Path(tmp_path)
 
+    app.dependency_overrides[get_current_time] = override_get_current_time
     app.dependency_overrides[get_db] = override_get_db
     app.dependency_overrides[get_upload_path] = override_get_upload_path
     with TestClient(app) as client:

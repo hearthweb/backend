@@ -1,5 +1,6 @@
 import hashlib
 import secrets
+from datetime import datetime
 from typing import Annotated
 
 import pyotp
@@ -27,6 +28,7 @@ from app.auth.routers.sessions import (
 )
 from app.database import get_db
 from app.utils import (
+    get_current_time,
     get_or_404,
     get_or_404_responses,
 )
@@ -64,6 +66,7 @@ def create(
     body: TotpCreateParams,
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[User, Depends(get_current_user)],
+    current_time: Annotated[datetime, Depends(get_current_time)],
 ) -> TotpSecret:
     totp = db.exec(
         select(Totp).where(Totp.user_id == user.id).with_for_update(),
@@ -73,7 +76,7 @@ def create(
             raise credential_exception
         totp = Totp(user_id=user.id)
     else:
-        if not totp.verify_code(totp.encrypted_secret, body.code):
+        if not totp.verify_code(totp.encrypted_secret, body.code, current_time):
             raise credential_exception
     secret = pyotp.random_hex()
     totp.encrypted_secret_new = secret
@@ -95,13 +98,14 @@ def verify(
     body: TotpVerifyParams,
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[User, Depends(get_current_user)],
+    current_time: Annotated[datetime, Depends(get_current_time)],
 ) -> TotpRecoveryCodes:
     totp = get_or_404(
         db.exec(
             select(Totp).where(Totp.user_id == user.id).with_for_update(),
-        ),
+        ).one_or_none(),
     )
-    if not totp.verify_code(totp.encrypted_secret_new, body.code):
+    if not totp.verify_code(totp.encrypted_secret_new, body.code, current_time):
         raise credential_exception
     totp.encrypted_secret = totp.encrypted_secret_new
     totp.encrypted_secret_new = ""

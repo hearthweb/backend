@@ -1,4 +1,11 @@
+from datetime import UTC, datetime
+
 from fastapi import HTTPException, status
+
+
+def get_current_time() -> datetime:
+    return datetime.now(tz=UTC)
+
 
 get_or_404_responses = {
     404: {"description": "Object not found"},

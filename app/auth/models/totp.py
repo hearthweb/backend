@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pyotp
 from cryptography.fernet import Fernet
 from sqlmodel import Field, SQLModel
@@ -27,8 +29,13 @@ class Totp(SQLModel, table=True):
         return pyotp.TOTP(cls._fernet().decrypt(encrypted_secret).decode())
 
     @classmethod
-    def verify_code(cls, encrypted_secret: str, code: str) -> bool:
-        return cls._totp(encrypted_secret).verify(code)
+    def verify_code(
+        cls,
+        encrypted_secret: str,
+        code: str,
+        current_time: datetime,
+    ) -> bool:
+        return cls._totp(encrypted_secret).verify(code, current_time)
 
     def set_secret(self, secret: str | None) -> None:
         self.encrypted_secret_new = self._fernet().encrypt(secret.encode())
