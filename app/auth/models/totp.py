@@ -59,8 +59,8 @@ class TotpRead(SQLModel):
 
 
 class TotpCreateParams(SQLModel):
-    password: str
-    code: str
+    password: str = ""
+    code: str = ""
 
 
 class TotpSecret(SQLModel):
