@@ -14,9 +14,9 @@ class Totp(SQLModel, table=True):
         unique=True,
         index=True,
     )
-    encrypted_secret: str
-    encrypted_secret_new: str
-    last_code: str
+    encrypted_secret: str = ""
+    encrypted_secret_new: str = ""
+    last_code: str = ""
 
     @staticmethod
     def _fernet() -> Fernet:
