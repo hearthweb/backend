@@ -15,3 +15,4 @@ def totp_fixture(
     totp.set_secret(pyotp.random_hex())
     db.add(totp)
     db.commit()
+    return totp
