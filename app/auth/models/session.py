@@ -28,3 +28,7 @@ class Session(SQLModel, table=True):
 class SessionLogin(SQLModel):
     email: str
     password: str
+
+
+class SessionLoginTotp(SQLModel):
+    code: str
