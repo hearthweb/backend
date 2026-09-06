@@ -61,7 +61,7 @@ def logged_in_user_fixture(
     user: User,
 ) -> User:
     response = client.post(
-        "/auth/session/login",
+        "/auth/sessions/login",
         json={
             "email": USER_EMAIL,
             "password": USER_PASSWORD,

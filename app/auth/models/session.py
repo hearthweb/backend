@@ -23,3 +23,8 @@ class Session(SQLModel, table=True):
     user_agent: str
     completed: bool = Field(default=False)
     expires: datetime = Field(sa_type=TZDateTime())
+
+
+class SessionLogin(SQLModel):
+    email: str
+    password: str

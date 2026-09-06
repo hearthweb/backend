@@ -57,8 +57,3 @@ class User(UserRead, table=True):
             + "zkCbYMPYw31MI+n24Zg$4steBPCprRmI"
             + "jkaUBeC+yPxXRTU5p0GAarRLjQvYvs4",
         )
-
-
-class UserLogin(SQLModel):
-    email: str
-    password: str

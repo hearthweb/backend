@@ -8,30 +8,34 @@ from app.auth.dependencies.session import (
     get_login_session,
     get_login_session_responses,
 )
-from app.auth.models.session import Session as AuthSession
+from app.auth.models.session import (
+    Session as AuthSession,
+)
+from app.auth.models.session import (
+    SessionLogin,
+)
 from app.auth.models.user import (
     User,
-    UserLogin,
     UserRead,
 )
 from app.config import Environment, settings
 from app.database import get_db
 from app.types import create_http_exception_response
 
-router = APIRouter(prefix="/session")
+router = APIRouter(prefix="/sessions")
 
 
 @router.post(
     "/login",
-    summary="Login with an email and password",
+    summary="Begin login with an email and password",
     responses={
         **create_http_exception_response(401, "Invalid credentials"),
     },
-    operation_id="authSessionlogin",
+    operation_id="authSessionLogin",
 )
 def login(
     db: Annotated[Session, Depends(get_db)],
-    body: UserLogin,
+    body: SessionLogin,
     response: Response,
     user_agent: Annotated[str, Header()] = "Unknown",
 ) -> UserRead:
@@ -71,7 +75,7 @@ def login(
     status_code=status.HTTP_204_NO_CONTENT,
     summary="End the current session",
     responses={**get_login_session_responses},
-    operation_id="authSessionlogout",
+    operation_id="authSessionLogout",
 )
 def logout(
     db: Annotated[Session, Depends(get_db)],
