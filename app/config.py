@@ -40,11 +40,19 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def validate_prod_keys(self) -> Settings:
         match self.ENVIRONMENT:
+            # Ensure that required values were provided
             case Environment.PROD:
                 if settings.SECRET_KEY == "":
                     raise RuntimeError("SECRET_KEY must be set in production")
                 if settings.TOTP_ENCRYPTION_KEY == "":
                     raise RuntimeError("TOTP_ENCRYPTION_KEY must be set in production")
+
+            # Use "dummy" values for dev and testing
+            case Environment.DEV:
+                self.TOTP_ENCRYPTION_KEY = (
+                    "qXw72UW+v0wmFk9uPq5iMyK7TnGR/obqObKUqyWt8KM="
+                )
+        return self
 
 
 settings = Settings()

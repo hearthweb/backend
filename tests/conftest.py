@@ -42,7 +42,8 @@ def client_fixture(
 
     app.dependency_overrides[get_db] = override_get_db
     app.dependency_overrides[get_upload_path] = override_get_upload_path
-    yield TestClient(app)
+    with TestClient(app) as client:
+        yield client
     app.dependency_overrides.clear()
 
 
