@@ -67,7 +67,7 @@ def create(
 ) -> TotpSecret:
     totp = db.exec(
         select(Totp).where(Totp.user_id == user.id).with_for_update(),
-    ).one_or_none
+    ).one_or_none()
     if totp is None:
         if not user.verify_password(body.password):
             raise credential_exception
@@ -79,7 +79,7 @@ def create(
     totp.encrypted_secret_new = secret
     db.add(totp)
     db.commit()
-    return TotpSecret(key=secret)
+    return TotpSecret(secret=secret)
 
 
 @router.post(
