@@ -1,7 +1,6 @@
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
-from auth.models.totp import Totp
 from fastapi import APIRouter, Depends, Header, HTTPException, Response, status
 from sqlmodel import Session, delete, select
 
@@ -21,6 +20,7 @@ from app.auth.models.session import (
     SessionLoginTotp,
     SessionLoginTOTPRequired,
 )
+from app.auth.models.totp import Totp
 from app.auth.models.user import (
     User,
     UserRead,
