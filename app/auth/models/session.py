@@ -42,6 +42,10 @@ class SessionLoginTotp(SQLModel):
     code: str
 
 
+class SessionLoginTotpRecovery(SQLModel):
+    code: str
+
+
 class SessionLoginSucceeded(UserRead):
     status: Literal["success"] = "success"
 

@@ -25,7 +25,7 @@ def get_login_session(
 ) -> AuthSession:
     """
     Verify that a login session was provided BUT do not confirm if login was
-    completed; this is useful only for the /login/otp route
+    completed; this is useful only for the /login/otp* routes
     """
     session = db.exec(
         select(AuthSession)

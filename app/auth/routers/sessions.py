@@ -1,3 +1,4 @@
+import hashlib
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
@@ -11,6 +12,7 @@ from app.auth.dependencies.session import (
     get_login_session_completed_responses,
     get_login_session_responses,
 )
+from app.auth.models.recovery import Recovery
 from app.auth.models.session import (
     Session as AuthSession,
 )
@@ -18,6 +20,7 @@ from app.auth.models.session import (
     SessionLogin,
     SessionLoginSucceeded,
     SessionLoginTotp,
+    SessionLoginTotpRecovery,
     SessionLoginTOTPRequired,
 )
 from app.auth.models.totp import Totp
@@ -119,6 +122,31 @@ def login_totp(
         raise credential_exception
     session.completed = True
     db.add(session)
+    db.commit()
+    return session.user
+
+
+@router.post(
+    "/login/totp/recovery",
+    summary="Complete login with a TOTP recovery code",
+    responses={},
+    operation_id="authSessionLoginTotpRecovery",
+)
+def login_totp_recover(
+    db: Annotated[Session, Depends(get_db)],
+    body: SessionLoginTotpRecovery,
+    session: Annotated[AuthSession, Depends(get_login_session)],
+) -> UserRead:
+    recovery = db.exec(
+        select(Recovery)
+        .where(Recovery.user_id == session.user_id)
+        .where(Recovery.code_hash == hashlib.sha256(body.code.encode()).hexdigest()),
+    ).one_or_none()
+    if recovery is None:
+        raise credential_exception
+    session.completed = True
+    db.add(session)
+    db.delete(recovery)
     db.commit()
     return session.user
 
