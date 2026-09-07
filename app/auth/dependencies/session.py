@@ -2,7 +2,6 @@ from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 from fastapi import Cookie, Depends, HTTPException, Response, status
-from sqlalchemy.orm import selectinload
 from sqlmodel import Session, func, select
 
 from app.auth.common import set_session_cookie
@@ -16,7 +15,7 @@ credential_exception = HTTPException(
 )
 
 credential_exception_responses = {
-    **create_http_exception_response(401, "Unauthorized"),
+    **create_http_exception_response(401, "Not authorized"),
 }
 
 
@@ -32,7 +31,6 @@ def get_login_session(
         select(AuthSession)
         .where(AuthSession.id == session_id)
         .where(AuthSession.expires > func.now())
-        .options(selectinload(AuthSession.user))
         .with_for_update(),
     ).one_or_none()
     if session is None:

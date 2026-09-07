@@ -7,10 +7,7 @@ from app.auth.dependencies.session import (
     get_login_session_completed,
     get_login_session_completed_responses,
 )
-from app.auth.dependencies.user import (
-    get_current_user,
-    get_current_user_responses,
-)
+from app.auth.models.session import Session as AuthSession
 from app.auth.models.user import (
     User,
     UserCreate,
@@ -43,13 +40,12 @@ def users(
 @router.get(
     "/me",
     summary="Get the current user's information",
-    responses={**get_current_user_responses},
     operation_id="authUsersMe",
 )
 def users_me(
-    user: Annotated[User, Depends(get_current_user)],
+    session: Annotated[AuthSession, Depends(get_login_session_completed)],
 ) -> UserRead:
-    return UserRead.model_validate(user)
+    return UserRead.model_validate(session.user)
 
 
 @router.get(
