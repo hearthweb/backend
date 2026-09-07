@@ -27,6 +27,9 @@ from app.auth.models.user import (
 )
 from app.database import get_db
 from app.types import create_http_exception_response
+from app.utils import (
+    get_current_time,
+)
 
 router = APIRouter(prefix="/sessions")
 
@@ -103,10 +106,13 @@ def login_totp(
     db: Annotated[Session, Depends(get_db)],
     body: SessionLoginTotp,
     session: Annotated[AuthSession, Depends(get_login_session)],
+    current_time: Annotated[datetime, Depends(get_current_time)],
 ) -> UserRead:
     totp = db.get(Totp, Totp.user_id == session.user_id)
     if totp is None or not totp.verify_code(
-        totp.encrypted_secret, body.code, datetime.now(tz=UTC)
+        totp.encrypted_secret,
+        body.code,
+        current_time,
     ):
         raise credential_exception
     session.completed = True
