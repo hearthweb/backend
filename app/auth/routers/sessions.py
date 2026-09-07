@@ -105,9 +105,9 @@ def login_totp(
     session: Annotated[AuthSession, Depends(get_login_session)],
 ) -> UserRead:
     totp = db.get(Totp, Totp.user_id == session.user_id)
-    if totp is None:
-        raise credential_exception
-    if not totp.verify_code(totp.encrypted_secret, body.code, datetime.now(tz=UTC)):
+    if totp is None or not totp.verify_code(
+        totp.encrypted_secret, body.code, datetime.now(tz=UTC)
+    ):
         raise credential_exception
     session.completed = True
     db.add(session)
