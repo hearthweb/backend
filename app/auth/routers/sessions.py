@@ -67,7 +67,7 @@ def login(
         raise credential_exception
 
     # Password authentication was successful, check for TOTP
-    totp = db.get(Totp, Totp.user_id == user.id)
+    totp = db.get(Totp, user.id)
     totp_required = totp is not None and totp.encrypted_secret
 
     # Create the login session
