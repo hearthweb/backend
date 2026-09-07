@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Header, HTTPException, Response, status
 from sqlmodel import Session, delete, select
 
-from app.auth import set_session_cookie
+from app.auth.common import set_session_cookie
 from app.auth.dependencies.session import (
     get_login_session,
     get_login_session_completed,

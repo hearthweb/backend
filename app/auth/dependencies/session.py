@@ -5,7 +5,7 @@ from fastapi import Cookie, Depends, HTTPException, Response, status
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, func, select
 
-from app.auth import set_session_cookie
+from app.auth.common import set_session_cookie
 from app.auth.models.session import Session as AuthSession
 from app.common.http import create_http_exception_response
 from app.database import get_db
