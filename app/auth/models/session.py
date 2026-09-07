@@ -8,7 +8,7 @@ from app.auth.models.user import (
     User,
     UserRead,
 )
-from app.types import TZDateTime
+from app.util.db import TZDateTime
 
 
 def generate_id() -> str:

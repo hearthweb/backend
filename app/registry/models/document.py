@@ -5,7 +5,7 @@ from sqlalchemy import BigInteger, String
 from sqlmodel import Field, Relationship, SQLModel, func
 
 from app.registry.models.category import Category, CategoryRead
-from app.types import TZDateTime
+from app.util.db import TZDateTime
 
 
 class DocumentWrite(SQLModel):

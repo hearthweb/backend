@@ -9,7 +9,7 @@ from app.finance.models.line import (
     LineCreate,
     LinePublic,
 )
-from app.types import Currency, TZDateTime
+from app.util.db import Currency, TZDateTime
 
 
 class TransactionWrite(SQLModel):
