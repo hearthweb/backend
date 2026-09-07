@@ -28,7 +28,7 @@ def create_user(
         user.set_password(password)
         db.add(user)
         db.commit()
-        typer.secho(f"Created admin {email}!", fg=typer.colors.GREEN)
+        typer.secho(f"Created user {email}!", fg=typer.colors.GREEN)
 
 
 @app.command(
