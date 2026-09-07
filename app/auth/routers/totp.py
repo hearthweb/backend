@@ -109,7 +109,6 @@ def verify(
     totp.encrypted_secret = totp.encrypted_secret_new
     totp.encrypted_secret_new = ""
     db.add(totp)
-    db.flush()
     db.exec(
         delete(TotpRecoveryCode).where(TotpRecoveryCode.totp_user_id == user.id),
     )
