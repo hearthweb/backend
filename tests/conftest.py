@@ -10,8 +10,8 @@ from sqlmodel import Session, SQLModel, StaticPool, create_engine
 from app.auth.models.user import User
 from app.database import get_db
 from app.main import app
-from app.upload import get_upload_path
 from app.util.time import get_current_time
+from app.util.upload import get_upload_path
 
 from . import (
     USER_EMAIL,

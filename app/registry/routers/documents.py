@@ -15,13 +15,13 @@ from app.registry.models.document import (
     Document,
     DocumentPublic,
 )
-from app.upload import (
-    get_upload_path,
-    upload_file,
-)
 from app.util.db import (
     get_or_404,
     get_or_404_responses,
+)
+from app.util.upload import (
+    get_upload_path,
+    upload_file,
 )
 
 router = APIRouter(
