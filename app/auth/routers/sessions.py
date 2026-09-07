@@ -108,11 +108,15 @@ def login_totp(
     session: Annotated[AuthSession, Depends(get_login_session)],
     current_time: Annotated[datetime, Depends(get_current_time)],
 ) -> UserRead:
-    totp = db.get(Totp, Totp.user_id == session.user_id)
-    if totp is None or not totp.verify_code(
-        totp.encrypted_secret,
-        body.code,
-        current_time,
+    totp = db.get(Totp, session.user_id)
+    if (
+        totp is None
+        or not totp.encrypted_secret
+        or not totp.verify_code(
+            totp.encrypted_secret,
+            body.code,
+            current_time,
+        )
     ):
         raise credential_exception
     session.completed = True
