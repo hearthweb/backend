@@ -50,3 +50,13 @@ def test_sessions_login_totp_verified(
         },
     )
     assert response.status_code == status.HTTP_200_OK
+
+
+def test_sessions_logout(
+    client: TestClient,
+    logged_in_user: User,
+):
+    response = client.post("/auth/sessions/logout")
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    response = client.get("/auth/users/me")
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
