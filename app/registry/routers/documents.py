@@ -7,8 +7,8 @@ from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
 from app.auth.dependencies.session import (
-    get_login_session,
-    get_login_session_responses,
+    get_login_session_completed,
+    get_login_session_completed_responses,
 )
 from app.database import get_db
 from app.registry.models.document import (
@@ -20,8 +20,8 @@ from app.utils import get_or_404, get_or_404_responses
 
 router = APIRouter(
     prefix="/documents",
-    dependencies=[Depends(get_login_session)],
-    responses={**get_login_session_responses},
+    dependencies=[Depends(get_login_session_completed)],
+    responses={**get_login_session_completed_responses},
 )
 
 

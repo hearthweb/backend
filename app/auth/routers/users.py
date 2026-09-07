@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, status
 from sqlmodel import Session, select
 
 from app.auth.dependencies.session import (
-    get_login_session,
-    get_login_session_responses,
+    get_login_session_completed,
+    get_login_session_completed_responses,
 )
 from app.auth.dependencies.user import (
     get_current_user,
@@ -21,8 +21,8 @@ from app.utils import get_or_404, get_or_404_responses
 
 router = APIRouter(
     prefix="/users",
-    dependencies=[Depends(get_login_session)],
-    responses={**get_login_session_responses},
+    dependencies=[Depends(get_login_session_completed)],
+    responses={**get_login_session_completed_responses},
 )
 
 
