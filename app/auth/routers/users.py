@@ -17,7 +17,10 @@ from app.auth.models.user import (
     UserRead,
 )
 from app.database import get_db
-from app.utils import get_or_404, get_or_404_responses
+from app.util.db import (
+    get_or_404,
+    get_or_404_responses,
+)
 
 router = APIRouter(
     prefix="/users",

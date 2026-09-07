@@ -26,11 +26,11 @@ from app.auth.routers.sessions import (
     credential_exception_responses,
 )
 from app.database import get_db
-from app.utils import (
-    get_current_time,
+from app.util.db import (
     get_or_404,
     get_or_404_responses,
 )
+from app.util.time import get_current_time
 
 router = APIRouter(
     prefix="/totp",

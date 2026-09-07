@@ -13,7 +13,10 @@ from app.registry.models.credential import (
     CredentialRead,
     CredentialWrite,
 )
-from app.utils import get_or_404, get_or_404_responses
+from app.util.db import (
+    get_or_404,
+    get_or_404_responses,
+)
 
 router = APIRouter(
     prefix="/credentials",

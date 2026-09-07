@@ -17,7 +17,10 @@ from app.finance.models.transaction import (
     TransactionPublic,
     TransactionRead,
 )
-from app.utils import get_or_404, get_or_404_responses
+from app.util.db import (
+    get_or_404,
+    get_or_404_responses,
+)
 
 router = APIRouter(
     prefix="/transactions",

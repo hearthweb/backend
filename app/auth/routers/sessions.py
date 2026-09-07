@@ -27,9 +27,7 @@ from app.auth.models.user import (
 )
 from app.database import get_db
 from app.types import create_http_exception_response
-from app.utils import (
-    get_current_time,
-)
+from app.util.time import get_current_time
 
 router = APIRouter(prefix="/sessions")
 

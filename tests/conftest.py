@@ -11,7 +11,7 @@ from app.auth.models.user import User
 from app.database import get_db
 from app.main import app
 from app.upload import get_upload_path
-from app.utils import get_current_time
+from app.util.time import get_current_time
 
 from . import (
     USER_EMAIL,
