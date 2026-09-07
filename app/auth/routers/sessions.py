@@ -1,11 +1,15 @@
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
+from auth.models.totp import Totp
 from fastapi import APIRouter, Depends, Header, HTTPException, Response, status
 from sqlmodel import Session, delete, select
 
+from app.auth import set_session_cookie
 from app.auth.dependencies.session import (
     get_login_session,
+    get_login_session_completed,
+    get_login_session_completed_responses,
     get_login_session_responses,
 )
 from app.auth.models.session import (
@@ -13,12 +17,14 @@ from app.auth.models.session import (
 )
 from app.auth.models.session import (
     SessionLogin,
+    SessionLoginSucceeded,
+    SessionLoginTotp,
+    SessionLoginTOTPRequired,
 )
 from app.auth.models.user import (
     User,
     UserRead,
 )
-from app.config import Environment, settings
 from app.database import get_db
 from app.types import create_http_exception_response
 
@@ -45,44 +51,80 @@ def login(
     body: SessionLogin,
     response: Response,
     user_agent: Annotated[str, Header()] = "Unknown",
-) -> UserRead:
+) -> SessionLoginSucceeded | SessionLoginTOTPRequired:
+
+    # Find the user that corresponds with the provided email
     user = db.exec(
         select(User).where(User.email == body.email),
     ).one_or_none()
+
+    # If no user was found, perform a dummy password verification to thwart
+    # timing attacks; otherwise, verify the user's password
     if user is None:
         User.dummy_verify_password(body.password)
         raise credential_exception
     if not user.verify_password(body.password):
         raise credential_exception
+
+    # Password authentication was successful, check for TOTP
+    totp = db.get(Totp, Totp.user_id == user.id)
+    totp_required = totp is not None and totp.encrypted_secret
+
+    # Create the login session
     expires = datetime.now(UTC) + timedelta(hours=1)
     session = AuthSession(
         user_id=user.id,
         user_agent=user_agent,
-        completed=True,
+        completed=not totp_required,
         expires=expires,
     )
     db.add(session)
     db.commit()
-    response.set_cookie(
-        key="session_id",
-        value=session.id,
-        httponly=True,
-        secure=settings.ENVIRONMENT == Environment.PROD,
-        expires=expires,
-    )
-    return UserRead.model_validate(user)
+
+    # Set the session cookie
+    set_session_cookie(response, session)
+
+    # Return the appropriate response
+    if totp_required:
+        return SessionLoginTOTPRequired()
+    return SessionLoginSucceeded.model_validate(user)
+
+
+@router.post(
+    "/login/totp",
+    summary="Complete login with a TOTP",
+    responses={
+        **get_login_session_responses,
+        **credential_exception_responses,
+    },
+    operation_id="authSessionLoginTotp",
+)
+def login_totp(
+    db: Annotated[Session, Depends(get_db)],
+    body: SessionLoginTotp,
+    session: Annotated[AuthSession, Depends(get_login_session)],
+) -> UserRead:
+    totp = db.get(Totp, Totp.user_id == session.user_id)
+    if totp is None:
+        raise credential_exception
+    if not totp.verify_code(totp.encrypted_secret, body.code, datetime.now(tz=UTC)):
+        raise credential_exception
+    session.completed = True
+    db.add(session)
+    db.commit()
+    return session.user
 
 
 @router.post(
     "/logout",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="End the current session",
-    responses={**get_login_session_responses},
+    responses={**get_login_session_completed_responses},
     operation_id="authSessionLogout",
 )
 def logout(
     db: Annotated[Session, Depends(get_db)],
-    session: Annotated[AuthSession, Depends(get_login_session)],
+    session: Annotated[AuthSession, Depends(get_login_session_completed)],
 ) -> None:
     db.delete(session)
     db.commit()
@@ -92,12 +134,12 @@ def logout(
     "/logout/all",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="End all active sessions for the current user",
-    responses={**get_login_session_responses},
+    responses={**get_login_session_completed_responses},
     operation_id="authSessionLogoutAll",
 )
 def logout_all(
     db: Annotated[Session, Depends(get_db)],
-    session: Annotated[AuthSession, Depends(get_login_session)],
+    session: Annotated[AuthSession, Depends(get_login_session_completed)],
 ) -> None:
     db.exec(
         delete(AuthSession).where(AuthSession.user_id == session.user_id),

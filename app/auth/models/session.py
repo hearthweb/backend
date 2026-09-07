@@ -1,9 +1,13 @@
 import secrets
 from datetime import datetime
+from typing import Literal
 
 from sqlmodel import Field, Relationship, SQLModel
 
-from app.auth.models.user import User
+from app.auth.models.user import (
+    User,
+    UserRead,
+)
 from app.types import TZDateTime
 
 
@@ -36,3 +40,11 @@ class SessionLogin(SQLModel):
 
 class SessionLoginTotp(SQLModel):
     code: str
+
+
+class SessionLoginSucceeded(UserRead):
+    status: Literal["success"] = "success"
+
+
+class SessionLoginTOTPRequired(SQLModel):
+    status: Literal["totp_required"] = "totp_required"

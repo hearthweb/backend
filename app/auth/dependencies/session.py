@@ -65,6 +65,6 @@ def get_login_session_completed(
     return session
 
 
-get_login_session_completed_response = {
+get_login_session_completed_responses = {
     **get_login_session_responses,
 }
