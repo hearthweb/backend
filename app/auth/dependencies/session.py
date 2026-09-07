@@ -5,8 +5,8 @@ from fastapi import Cookie, Depends, HTTPException, Response, status
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, func, select
 
+from app.auth import set_session_cookie
 from app.auth.models.session import Session as AuthSession
-from app.config import Environment, settings
 from app.database import get_db
 from app.types import create_http_exception_response
 
@@ -18,19 +18,6 @@ credential_exception = HTTPException(
 credential_exception_responses = {
     **create_http_exception_response(401, "Unauthorized"),
 }
-
-
-def set_session_cookie(
-    response: Response,
-    session: AuthSession,
-) -> None:
-    response.set_cookie(
-        key="session_id",
-        value=session.id,
-        httponly=True,
-        secure=settings.ENVIRONMENT == Environment.PROD,
-        expires=session.expires,
-    )
 
 
 def get_login_session(
