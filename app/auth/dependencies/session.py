@@ -2,6 +2,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 from fastapi import Cookie, Depends, HTTPException, Response, status
+from sqlalchemy.orm import selectinload
 from sqlmodel import Session, func, select
 
 from app.auth.models.session import Session as AuthSession
@@ -44,6 +45,7 @@ def get_login_session(
         select(AuthSession)
         .where(AuthSession.id == session_id)
         .where(AuthSession.expires > func.now())
+        .options(selectinload(AuthSession.user))
         .with_for_update(),
     ).one_or_none()
     if session is None:

@@ -18,7 +18,11 @@ class Session(SQLModel, table=True):
         default_factory=generate_id,
         primary_key=True,
     )
-    user_id: int = Field(foreign_key="auth_user.id")
+    user_id: int = Field(
+        foreign_key="auth_user.id",
+        ondelete="CASCADE",
+        index=True,
+    )
     user: User = Relationship()
     user_agent: str
     completed: bool = Field(default=False)
