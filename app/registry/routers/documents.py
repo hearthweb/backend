@@ -10,18 +10,18 @@ from app.auth.dependencies.session import (
     get_login_session_completed,
     get_login_session_completed_responses,
 )
+from app.common.db import (
+    get_or_404,
+    get_or_404_responses,
+)
+from app.common.upload import (
+    get_upload_path,
+    upload_file,
+)
 from app.database import get_db
 from app.registry.models.document import (
     Document,
     DocumentPublic,
-)
-from app.util.db import (
-    get_or_404,
-    get_or_404_responses,
-)
-from app.util.upload import (
-    get_upload_path,
-    upload_file,
 )
 
 router = APIRouter(

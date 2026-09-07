@@ -16,11 +16,11 @@ from app.auth.models.user import (
     UserCreate,
     UserRead,
 )
-from app.database import get_db
-from app.util.db import (
+from app.common.db import (
     get_or_404,
     get_or_404_responses,
 )
+from app.database import get_db
 
 router = APIRouter(
     prefix="/users",

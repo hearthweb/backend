@@ -4,12 +4,12 @@ from decimal import Decimal
 from sqlalchemy import String
 from sqlmodel import Field, Relationship, SQLModel
 
+from app.common.db import Currency, TZDateTime
 from app.finance.models.line import (
     Line,
     LineCreate,
     LinePublic,
 )
-from app.util.db import Currency, TZDateTime
 
 
 class TransactionWrite(SQLModel):

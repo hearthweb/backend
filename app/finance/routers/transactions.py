@@ -8,6 +8,10 @@ from app.auth.dependencies.session import (
     get_login_session_completed,
     get_login_session_completed_responses,
 )
+from app.common.db import (
+    get_or_404,
+    get_or_404_responses,
+)
 from app.database import get_db
 from app.finance.models.line import Line
 from app.finance.models.tag import Tag
@@ -16,10 +20,6 @@ from app.finance.models.transaction import (
     TransactionCreate,
     TransactionPublic,
     TransactionRead,
-)
-from app.util.db import (
-    get_or_404,
-    get_or_404_responses,
 )
 
 router = APIRouter(

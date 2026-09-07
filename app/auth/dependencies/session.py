@@ -7,8 +7,8 @@ from sqlmodel import Session, func, select
 
 from app.auth import set_session_cookie
 from app.auth.models.session import Session as AuthSession
+from app.common.http import create_http_exception_response
 from app.database import get_db
-from app.util.http import create_http_exception_response
 
 credential_exception = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,

@@ -4,10 +4,10 @@ from sqlalchemy import String, event
 from sqlalchemy.orm.mapper import Mapper
 from sqlmodel import Field, Relationship, SQLModel
 
+from app.common.db import Currency
 from app.finance.models.account import Account, AccountRead
 from app.finance.models.tag import Tag, TagRead
 from app.finance.models.taglinelink import TagLineLink
-from app.util.db import Currency
 
 
 class LineBase(SQLModel):

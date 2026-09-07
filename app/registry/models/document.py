@@ -4,8 +4,8 @@ from pathlib import Path
 from sqlalchemy import BigInteger, String
 from sqlmodel import Field, Relationship, SQLModel, func
 
+from app.common.db import TZDateTime
 from app.registry.models.category import Category, CategoryRead
-from app.util.db import TZDateTime
 
 
 class DocumentWrite(SQLModel):

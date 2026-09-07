@@ -25,9 +25,9 @@ from app.auth.models.user import (
     User,
     UserRead,
 )
+from app.common.http import create_http_exception_response
+from app.common.time import get_current_time
 from app.database import get_db
-from app.util.http import create_http_exception_response
-from app.util.time import get_current_time
 
 router = APIRouter(prefix="/sessions")
 

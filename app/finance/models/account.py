@@ -3,7 +3,7 @@ from decimal import Decimal
 from sqlalchemy import String
 from sqlmodel import Field, SQLModel
 
-from app.util.db import Currency
+from app.common.db import Currency
 
 
 class AccountWrite(SQLModel):
