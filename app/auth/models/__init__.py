@@ -1,11 +1,10 @@
-from .recovery import Recovery
 from .session import Session
-from .totp import Totp
+from .totp import Totp, TotpRecoveryCode
 from .user import User
 
 __all__ = [
-    "Recovery",
     "Session",
     "Totp",
+    "TotpRecoveryCode",
     "User",
 ]
