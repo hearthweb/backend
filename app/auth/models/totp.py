@@ -60,7 +60,7 @@ class TotpRecoveryCode(SQLModel, table=True):
         ondelete="CASCADE",
         index=True,
     )
-    code_hash: str = Field(sa_type=String(6))
+    code_hash: str = Field(sa_type=String(64))
 
 
 class TotpRead(SQLModel):

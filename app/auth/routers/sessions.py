@@ -1,18 +1,19 @@
-import hashlib
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Response, status
 from sqlmodel import Session, delete, select
 
-from app.auth.common import set_session_cookie
+from app.auth.common import (
+    set_session_cookie,
+    sha256,
+)
 from app.auth.dependencies.session import (
     get_login_session,
     get_login_session_completed,
     get_login_session_completed_responses,
     get_login_session_responses,
 )
-from app.auth.models.recovery import Recovery
 from app.auth.models.session import (
     Session as AuthSession,
 )
@@ -23,7 +24,10 @@ from app.auth.models.session import (
     SessionLoginTotpRecovery,
     SessionLoginTOTPRequired,
 )
-from app.auth.models.totp import Totp
+from app.auth.models.totp import (
+    Totp,
+    TotpRecoveryCode,
+)
 from app.auth.models.user import (
     User,
     UserRead,
@@ -138,9 +142,9 @@ def login_totp_recover(
     session: Annotated[AuthSession, Depends(get_login_session)],
 ) -> UserRead:
     recovery = db.exec(
-        select(Recovery)
-        .where(Recovery.user_id == session.user_id)
-        .where(Recovery.code_hash == hashlib.sha256(body.code.encode()).hexdigest()),
+        select(TotpRecoveryCode)
+        .where(TotpRecoveryCode.totp_user_id == session.user_id)
+        .where(TotpRecoveryCode.code_hash == sha256(body.code)),
     ).one_or_none()
     if recovery is None:
         raise credential_exception

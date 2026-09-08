@@ -7,7 +7,7 @@ from app.config import Environment, settings
 
 
 def sha256(cleartext: str) -> str:
-    hashlib.sha256(cleartext.encode()).hexdigest()
+    return hashlib.sha256(cleartext.encode()).hexdigest()
 
 
 def set_session_cookie(

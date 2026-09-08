@@ -1,7 +1,13 @@
+import secrets
+
 import pytest
 from sqlmodel import Session
 
-from app.auth.models.totp import Totp
+from app.auth.common import sha256
+from app.auth.models.totp import (
+    Totp,
+    TotpRecoveryCode,
+)
 from app.auth.models.user import User
 
 from . import TOTP_SECRET
@@ -29,3 +35,19 @@ def totp_verified_fixture(
     db.add(totp)
     db.commit()
     return totp
+
+
+@pytest.fixture(name="totp_recovery")
+def totp_recovery(
+    db: Session,
+    user: User,
+    totp_verified: Totp,
+) -> str:
+    code = secrets.token_hex(8)
+    recovery_code = TotpRecoveryCode(
+        totp_user_id=user.id,
+        code_hash=sha256(code),
+    )
+    db.add(recovery_code)
+    db.commit()
+    return code
