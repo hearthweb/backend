@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pyotp
 from cryptography.fernet import Fernet
+from sqlalchemy import String
 from sqlmodel import Field, SQLModel
 
 from app.config import settings
@@ -16,9 +17,18 @@ class Totp(SQLModel, table=True):
         unique=True,
         index=True,
     )
-    encrypted_secret: str = ""
-    encrypted_secret_new: str = ""
-    last_code: str = ""
+    encrypted_secret: str = Field(
+        default="",
+        sa_type=String(140),
+    )
+    encrypted_secret_new: str = Field(
+        default="",
+        sa_type=String(140),
+    )
+    last_code: str = Field(
+        default="",
+        sa_type=String(6),
+    )
 
     @staticmethod
     def _fernet() -> Fernet:
@@ -50,7 +60,7 @@ class TotpRecoveryCode(SQLModel, table=True):
         ondelete="CASCADE",
         index=True,
     )
-    code_hash: str
+    code_hash: str = Field(sa_type=String(6))
 
 
 class TotpRead(SQLModel):
